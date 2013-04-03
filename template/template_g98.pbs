@@ -1,0 +1,33 @@
+#!/bin/sh --login
+#
+# A PBS Jobscript Template for Running g98 Jobs.
+#
+
+cd $PBS_O_WORKDIR
+
+# Header Information
+echo Running on host `hostname`
+echo Time is `date`
+echo Directory is `pwd`
+
+# access g98 commands
+use g98
+
+# prepare g98 scratch directory
+if [ -d /scratch/$USER/g98 ]; then
+  rm -rf /scratch/$USER/g98
+fi
+mkdir -p /scratch/$USER/g98
+
+# Run the job in the scratch directory, and write all
+# output to a .log file in the local directory;
+# Remember to change "jobname" to your g98 input filename!
+cd /scratch/$USER/g98
+g98 < $PBS_O_WORKDIR/jobname.com > $PBS_O_WORKDIR/jobname.log
+
+# move check files
+mv -f *.chk $PBS_O_WORKDIR/
+
+# clean up
+cd
+rm -rf /scratch/$USER/g98

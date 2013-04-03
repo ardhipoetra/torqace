@@ -1,0 +1,7 @@
+
+* Documents about usage and features.
+
+* Can we find a way around putting www-data's public key in 
+  every user's ~/.ssh/authorized_keys2 ? Or come up with a
+  way to secure the system...
+

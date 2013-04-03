@@ -1,0 +1,15 @@
+#!/bin/sh --login
+#
+# A Plain PBS Jobscript Template.
+#
+
+cd $PBS_O_WORKDIR
+
+# Header Information
+echo Running on host `hostname`
+echo Time is `date`
+echo Directory is `pwd`
+
+# Enter the command you want to execute here
+# NOTE: Run jobs with intensive Disk I/O under /scratch
+

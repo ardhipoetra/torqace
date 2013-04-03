@@ -1,0 +1,194 @@
+PBSWeb-Lite: A Simple Web-based Interface to PBS/Torque
+================================================
+
+This is PBSWeb-Lite, a simple web-based interface to PBS/Torque.
+PBSWeb-Lite is based on Paul Lu's PBSWeb code, with substantial
+re-writing in almost all PHP files. 
+
+Thanks for works done by Paul Lu et al. Without PBSWeb, there
+will be no PBSWeb-Lite.
+
+PBSWeb-Lite is free software, you can redistribute it and/or 
+modify it under the terms of the GNU General Public License.
+
+The GNU General Public License does not permit this software to be
+redistributed in proprietary programs.
+
+This library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Installation
+============
+
+*** So far, has only been tested on a Debian GNU/Linux 3.0 system. ***
+
+*** Please drop me a line if you successfully (or unsuccessfully) installed 
+*** the software following this instruction, I would like to write a 
+*** more complete version of this.
+
+I assume you have access to the root account.
+
+Requirements:
+
+  You will need the following software packages for PBSWeb-Lite to function
+  correctly:
+
+  1. PBS or Torque, and related utilities.
+
+     Well, I don't know why you are reading this if you don't already have 
+     PBS or Torque installed... :p
+
+  2. Apache HTTP Server.
+
+     You need a http server capable of doing PHP4 to run PBSWeb. In addition,
+     if you want secure web link via SSL, you will need openssl and apache 
+     modeSSL module. We use apache-1.3.26, apache-ssl-1.3.26, and 
+     openssl-0.9.6c from Debian woody on our system.
+
+
+  3. PHP4 scripting language.
+
+     We use php4-4.1.2. Remember to activate the php4 module in your http
+     server configuration file.
+  
+  4. SSH.
+
+     PBSWeb-Lite heavily relies on Secure Shell Server/Client (e.g. OpenSSH)
+     for its remote control functions. So you need to make sure that the
+     server you run PBSWeb-Lite on has a working ssh client, and all 
+     resource providers (i.e. servers running pbs_server) is open to ssh 
+     connections.
+
+I assume that all above mentioned tools are installed and function correctly.
+In addition, you will need to know the name of the "pseudo user" that runs
+the HTTP server on your system. On my Debian system, the http user is "www-data".
+So please replace all occurrences of "www-data" to proper username.
+Following these steps to install and setup PBSWeb-Lite:
+
+  a. Compile spasswd and install PHP scripts.
+
+     1. Download PBSWeb-Lite form the website:
+        http://seventeen.mit.edu/blog/platin/pbsweb
+     2. Expand the tar file
+        tar xvfz pbsweb-lite-0.95.tar.gz
+        cd pbsweb-lite-0.95
+     3. Edit Makefile, change INSTALLDIR, HTTPUSER, and HOSTNAME
+        accordingly. See the comments in Makefile for the meaning of
+        these variables.
+     4. Make the spasswd binary, and install everything.
+        make; make install
+
+  b. PHP and Apache settings.
+
+     1. Edit your PHP settings file (php.ini), make sure
+        the following directives are set properly:
+        session.use_cookies = 1
+        file_uploads = On
+        upload_max_filesize = 50M
+        session.cache_limiter =
+
+     2. Edit your apache http.conf file, make sure the
+        following lines are uncommented:
+        LoadModule php4_module /usr/lib/apache/1.3/libphp4.so
+        AddType application/x-httpd-php .php
+        AddType application/x-httpd-php-source .phps
+        
+        also remember to add "index.php" into your DirectoryIndex, e.g.
+        DirectoryIndex index.html index.htm index.shtml index.cgi index.php
+
+      3. Restart apache (or apache-ssl) HTTP server after any change!
+
+  c. PBSWeb-Lite settings.
+
+     1. Go to your PBSWeb-Lite INSTALLDIR (defined in the Makefile!), find
+        PBSWeb-Lite settings file, config.php.
+
+     2. Following the instructions in this file, edit values of variables 
+        to fit your system configurations.
+
+     3. Create the upload directory ($PBSWEBTEMPUPLOADDIR in config.php), and
+        change its mode to 700.
+
+  d. Generate ssh authentication key for www-data.
+
+     We will need to enable the apache user (www-data in Debian GNU/Linux)
+     to use ssh to login as other users. We generate ssh authentication key
+     for this purpose. So, as root, we "su" to www-data and use ssh-keygen to 
+     generate the key-pair. Assuming that you are running ssh2, run the 
+     following commands as root:
+
+        su - www-data
+        cd ~www-data
+        mkdir .ssh
+        chmod 700 .ssh
+        ssh-keygen -t dsa -f .ssh/id_dsa
+        
+     When ssh-keygen asks the passphrase, just press <Enter>. The program will 
+     generate two files, id_dsa and id_dsa.pub, under ~/.ssh. The id_dsa.pub
+     is the public key. Copy it to someplace that can be access by other users
+     later. e.g. I copy it to /etc/apache/id_dsa.pub. 
+
+     When finished, logout www-data.
+
+  e. Now, for each user who wants to use PBSWeb-Lite, he/she has to create
+     a directory called "pbsweb" in his/her $HOME, and also add the public
+     key of www-data that we just generated into his/her ~/.ssh/authorized_keys2.
+
+     A script similar to the one below can do the trick:
+
+---------- CUT BELOW HERE ----------
+#!/bin/sh
+
+# Script to help users to setup PBSWeb-Lite data directory and
+# public key.
+ 
+if [ ! -d "$HOME/pbsweb" ]; then
+  mkdir -p  $HOME/pbsweb
+fi
+if [ ! -d ~/.ssh ]; then
+  mkdir -p ~/.ssh
+fi
+
+cat /etc/apache/id_dsa.pub >> ~/.ssh/authorized_keys2
+
+---------- CUT ABOVE HERE ----------
+
+     It is also possible to put these in the /etc/skel/ directory, so that
+     every new user is ready for PBSWeb-Lite when you create an account.
+
+     *** NOTICE: Keep an eye on your apache user account (www-data) after
+     ***         you did this. This is certainly unsafe and has to be changed
+     ***         in the future!!!
+
+Remember you need to perform the last step for all users. 
+
+Now, everything should be ready. Fire up your browser and point it to the URL
+where you installed PBSWeb-Lite. Enjoy!
+
+
+More Information about PBSWeb-Lite
+==================================
+
+More information and the current version of PBSWeb-Lite is available at
+http://seventeen.mit.edu/blog/platin/pbsweb.
+
+See the History file for recent changes to the program.
+
+Information about PBSWeb
+========================
+
+Information about the original PBSWeb can be found at the following URL:
+http://www.cs.ualberta.ca/~pinchak/PBSWeb/
+
+Information about Torque
+========================
+
+
+
+Contact
+=======
+
+Questions and suggestions about PBSWeb-Lite should go to
+Yuan-Chung Cheng <yccheng@mit.edu>
+

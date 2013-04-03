@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+#PBS -l nodes=4:ppn=1
+#
+
+cd $PBS_O_WORKDIR
+
+# Header Information
+echo Running on master host `hostname`
+echo Time is `date`
+echo Directory is `pwd`
+echo Nodefile: $PBS_NODEFILE
+echo This jobs runs on the following processors:
+echo `cat $PBS_NODEFILE`
+# Define number of processors
+NPROCS=`wc -l < $PBS_NODEFILE`
+echo This job has allocated $NPROCS nodes
+
+# Run the parallel MPI job,
+# executable "a.out" with argument "test_options".
+# NOTE: Run jobs with intensive Disk I/O under /scratch
+mpirun -v -machinefile $PBS_NODEFILE -np $NPROCS ./a.out test_options
+

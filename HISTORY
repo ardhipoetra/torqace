@@ -1,0 +1,80 @@
+PBSWeb-Lite History
+===================
+
+This is PBSWeb-Lite, a simple web-based interface to PBS/Torque.
+PBSWeb-Lite is based on Paul Lu's PBSWeb code, with substantial
+re-writting in almost all PHP files. Since the PHP code was modified
+by me in a great fraction, I think that it is inappropriate to
+keep calling it "PBSWeb". Therefore, I call it "PBSWeb-Lite".
+
+Thanks for works done by Paul Lu et al. Without PBSWeb, there
+will be no PBSWeb-Lite.
+
+
+Version 0.95 -- Thu Mar 18 2004
+-------------------------------
+
+This is the first release of PBSWeb-Lite. PBSWeb-Lite is a substantial
+re-writing of Paul Lu's PBSWeb codes. Here is a list of differences 
+between PBSWeb and PBSWeb-Lite:
+
+  * All PostgreSQL related codes in PBSWeb were removed. PBSWeb-Lite
+    does not depend on a SQL server, and all required parameters are
+    stored in a config file (config.php).
+
+  * Accounts for PBSWeb-Lite are now directly integrated with the
+    Un*x system accounts. PBSWeb-Lite use a simple C program (spasswd.c)
+    to validate username and password (assume shadow password!).
+
+  * PBSWeb-Lite support templates for generating PBS scripts. Also, now
+    it is possible to create a new job based on a previous saved jobscript.
+
+  * PBSWeb-Lite has a simple web-based file manager that can help user
+    to view/download/delete PBS input and output files.
+    
+  * And many other minor changes that I have forgorten.
+
+
+Version 0.9 (BUTF Release) of PBSWeb
+------------------------------------
+
+PBSWeb-Lite is based on this PBSWeb code written by Paul Lu et al.
+Information about PBSWeb can be found here:
+
+http://www.cs.ualberta.ca/~pinchak/PBSWeb/
+
+PBSWeb is designed to do the following (from PBSWeb website):
+
+  * Allow the user to submit jobs to PBS without hand-writing 
+    a complicated script.
+  * Save all scripts submitted by a user for future modification 
+    and/or resubmission.
+  * Allow a user to submit jobs to any site with equal ease. 
+    The site could be across the street or across the country.
+  * Allow the user to manage jobs without logging into any remote 
+    machines. The user may view jobs in queues and delete any of 
+    their currently queued or running jobs.
+  * Allow the user to view the output of a job without logging 
+    into any remote machine.
+  * Do all of this in a secure manner (via SSL), and with utilities 
+    commonly available on most Unices.
+  * Submit jobs as the actual user, not just on behalf of the 
+    user (via SSH). 
+
+The following is the contact information for the original PBSWeb authors:
+
+	Paul Lu
+	Assistant Professor
+	Dept. of Computing Science
+	Athabasca Hall
+	University of Alberta
+	Edmonton, Alberta, T6G 2E8
+	Canada
+
+	E-mail:         paullu@cs.ualberta.ca
+	Web:            http://www.cs.ualberta.ca/~paullu/
+
+Other contributors to PBSWeb (as of July 2001)
+	George Ma, Victor Salamon, Christopher Pinchak, Yaling Pei,
+	Jonathan Schaeffer, Duane Szafron
+
