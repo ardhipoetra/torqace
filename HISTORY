@@ -1,14 +1,14 @@
-PBSWeb-Lite History
+Torqace History
 ===================
 
-This is PBSWeb-Lite, a simple web-based interface to PBS/Torque.
-PBSWeb-Lite is based on Paul Lu's PBSWeb code, with substantial
-re-writting in almost all PHP files. Since the PHP code was modified
-by me in a great fraction, I think that it is inappropriate to
-keep calling it "PBSWeb". Therefore, I call it "PBSWeb-Lite".
+Torqace is a web-based interface for PBS/Torque. I modified it
+from Yuan-Chung Cheng's PBSWeb-Lite. PBSWeb-Lite is based on 
+Paul Lu's PBSWeb code,with substantial re-writting in almost all PHP files.
+So i modified PBSWeb-Lite for my undergraduate thesis because it don't have 
+any requirement like postgres etc.
 
-Thanks for works done by Paul Lu et al. Without PBSWeb, there
-will be no PBSWeb-Lite.
+Thanks for works done by Paul Lu et al, and Yuan-Chung Cheng for the great
+project!
 
 
 Version 0.95 -- Thu Mar 18 2004
