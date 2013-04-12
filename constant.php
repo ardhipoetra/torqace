@@ -1,5 +1,4 @@
-<?php
-/*
+<?php /*
 
  Torqace : Torque Interface
 
@@ -25,20 +24,12 @@
 
  */
 ?>
-<?php include_once 'constant.php'; ?>
-<hr>
-<table style="height: 40px; width: 100%;">
-	<td bgcolor="#CCDF9D">
-	<center>
-		<!-- <b>Navigation:</b> -->
-		<a href="mainmenu.php"><?php echo $TITLE_MAINMENU; ?></a> || 
-		<a href="upload.php"><?php echo $TITLE_UPLOAD; ?></a> || <!--
-		<a href="dirselect.php?action=compile">Compile Uploaded Files</a> ||
-		<a href="dirselect.php?action=script">Script Creation and Submission</a> ||
-		<a href="qstat.php">PBS Queue Information</a> ||
-		-->
-		<a href="dirview.php"><?php echo $TITLE_VIEWDIR; ?></a> || <!-- <a href="index.html">Login</a> ||
-		-->
-		<a href="logout.php">Logout</a>
-	</center></td>
-</table>
+<?php
+    $TITLE_UPLOAD = "Unggah Berkas/Project";
+	$TITLE_INDEX = "Halaman Login";
+	$TITLE_MAINMENU = "Menu Utama";
+	$TITLE_SCRIPTGEN = "Buat Script Torque";
+	$TITLE_SCRIPTVIEW = "Script Review Torque";
+	$TITLE_VIEWDIR = "Lihat Berkas/Project";
+	$TITLE_QSTAT = "Status Queue";
+?>

@@ -1,146 +1,207 @@
-<?php
-/*
+<?php /*
+ 
+ Torqace : Torque Interface
 
-PBSWeb-Lite: A Simple Web-based Interface to PBS
+ Copyright (C) 2013, Ardhi Putra Pratama
 
-Copyright (C) 2003, 2004 Yuan-Chung Cheng
+ Torqace is based on the PBSWeb-Lite code written by Yuan-Chung Cheng.
+ PBSWeb-Lite is based on the PBSWeb code written by Paul Lu et al.
+ See History for more details.
 
-PBSWeb-Lite is based on the PBSWeb code written by Paul Lu et al.
-See History for more detailes.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-*/
+ */
 ?>
 <?php
-
-include_once("config.php");
+include_once ("config.php");
+include_once ("pbsutils.php");
+include_once 'constant.php';
 
 session_name($PBSWEBNAME);
-session_set_cookie_params($PBSWEBEXPTIME,$PBSWEBPATH);
+session_set_cookie_params($PBSWEBEXPTIME, $PBSWEBPATH);
 session_start();
-setcookie(session_name(),session_id(), time()+$PBSWEBEXPTIME, $PBSWEBPATH);
+setcookie(session_name(), session_id(), time() + $PBSWEBEXPTIME, $PBSWEBPATH);
 
-include_once("auth.php");
+include_once ("auth.php");
 
 auth_page();
 
-$username=$_SESSION['username'];
+$username = $_SESSION['username'];
 
 if (!$_POST['host']) {
-  $host = $PBSWEBDEFAULTHOST;
+	$host = $PBSWEBDEFAULTHOST;
 } else {
-  $host=$_POST['host'];
+	$host = $_POST['host'];
 }
 
 if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] == "") {
-  error_page("Failed retrieving qstat command");
-  exit();
+	error_page("Gagal membuka qstat");
+	exit();
 } else {
-  $qstat_cmd = $PBSWEBHOSTLIST[$host]["qstat"];
+	$qstat_cmd = $PBSWEBHOSTLIST[$host]["qstat"];
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<META HTTP-EQUIV="no-cache">
-  <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
-  <title>PBSWeb-Lite Queue Status</title>
-<script language="JavaScript"><!--
-setTimeout("window.document.forms[0].submit()",60000);
-//-->
-</script>
-</head>
-<body bgcolor="white">
-  <h1>
-<img src="img/littlepbsguy.jpg" border="0" height="102" width="92" alt="PBS Logo">PBSWeb-Lite Queue Status
-  </h1>
+	<head>
+		<META HTTP-EQUIV="no-cache">
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<title><?php echo $TITLE_QSTAT; ?> </title>
+		<script language="JavaScript">
+			<!--setTimeout("window.document.forms[0].submit()", 60000);
+			//-->
+		</script>
+	</head>
+	<body bgcolor="white">
+		<h1><img src="<?php echo $PBSWEBHEADERLOGO; ?>" border="0" height="102" width="92" alt="PBS Logo"><?php echo $TITLE_QSTAT; ?> </h1>
 
-<?php
-  /* Put standard navigation menu */
-include("navbar.php");
-?>
+		<?php /* Put standard navigation menu */
+	include ("navbar.php");
+		?>
 
-<hr>
-<form method="POST" action="qstat.php">
-    <table><tr><th>Host:</th><td><select name="host" onChange="window.document.forms[0].submit()">
+		<hr>
+		<form method="POST" action="qstat.php">
+			<table>
+				<tr>
+					<th>Host:</th><td>
+					<select name="host" onChange="window.document.forms[0].submit()">
+						<?php // get the list of hosts
+						foreach ($PBSWEBHOSTLIST as $hostname => $hostdata) {
+							if ($hostname == $host) {
+								echo "<OPTION VALUE=\x22$hostname\x22 SELECTED>$hostname";
+							} else {
+								echo "<OPTION VALUE=\x22$hostname\x22>$hostname";
+							}
+						}
+						?>
+					</select></td>
+					<td>
+					<INPUT TYPE="submit" VALUE="Reload">
+					</td>
+				</tr>
+			</table>
+		</form>
+		<?php
+			$qstat = `ssh -l $username $host '$qstat_cmd; exit' 2>&1`;
+			$qstatB = `ssh -l $username $host '$qstat_cmd -B; exit' 2>&1`;
+			$qstatQ = `ssh -l $username $host '$qstat_cmd -Q; exit' 2>&1`;
+		?>
+		<h2>Queue yang sedang/baru berjalan</h2>
+		<!-- 20010510 Chris added links to job id and for deletion. -->
+		<table width=90% border=1>
+			<?php 
+			$stringarray = explode("\n", $qstat);
+			if (sizeof($stringarray) - 1 <= 0) print("Tidak ada Queue yang dapat dilihat\n");
+			else {
+			?>
+				<tr>
+				<th>ID Job</th>
+				<th>Nama Job</th>
+				<th>User yang menjalankan</th>
+				<th>Waktu yang dipakai</th>
+				<th>Status</th>
+				<th>Queue yang dipakai</th>
+				<!--<th>Action</th> -->
+				</tr>
+			<?php
+			}
+			for ($i = 2; $i < sizeof($stringarray) - 1; $i = $i + 1) {
+				print("<tr>");
+				if ($i == 0) {
+					$stringarray[$i] = str_replace("Job id", "Job-id", $stringarray[$i]);
+					$stringarray[$i] = str_replace("Time Use", "Time-Use", $stringarray[$i]);
+				}
+				$the_new_line = ereg_replace('(  *)', " ", $stringarray[$i]);
+				$line_array = explode(" ", $the_new_line);
+				$jobid = (int)$line_array[0];
+				for ($j = 0; $j < sizeof($line_array)-1; $j = $j + 1) {
+					print('<td align="center">');
+					if ($j == 0)
+						print("<a href=\"jobstatus.php?jobid=$jobid&host=$host\">$line_array[$j]</a></td>");
+					elseif ($j == 4) {
+						if ($line_array[$j] == "C") print("Selesai</td>");
+						elseif ($line_array[$j] == "R") print("Sedang Berjalan</td>");
+						elseif ($line_array[$j] == "Q") print("Mengantri</td>");
+					}
+					elseif ($j==6 && $username == $line_array[2]) {
+						//print("<a href=\"qdel.php?jobid=$jobid&host=$host\">Delete</a></td>");
+					}
+					else
+						print("$line_array[$j]</td>");
+				}
+				print("</tr>");
+			}
+			?>
+		</table>
+
+		<h2>Status Queue</h2>
+		<table border="1">
+			<tr>
+				<th>Nama Queue</th>
+				<th>Jumlah Max Job</th>
+				<th>Jumlah Job dalam Queue</th>
+				<th>Status (Enable/Disable)</th>
+				<th>Status (Started/Stopped)</th>
+				<th>Jumlah Job yang mengantri</th>
+				<th>Jumlah Job yang berjalan</th>
+				<th>Jumlah Job yang ditahan (hold)</th>
+				<th>Jumlah Job yang menunggu waktu untuk dijalankan</th>
+				<th>Jumlah Job yang sedang dipindahkan</th>
+				<th>Jumlah Job yang menunggu untuk keluar dari queue</th>
+				<th>Tipe Queue (Execution/Routing)</th>
+			</tr>
+			<tr>
 <?php 
-    // get the list of hosts
-    foreach ($PBSWEBHOSTLIST as $hostname => $hostdata) {
-    if ($hostname==$host) {
-      echo "<OPTION VALUE=\x22$hostname\x22 SELECTED>$hostname";
-    } else {
-      echo "<OPTION VALUE=\x22$hostname\x22>$hostname";
-    }
-  }
-?>
-
-</select></td><td><INPUT TYPE="submit" VALUE="Reload"></td></tr></table>
-</form>
-<?php
-    $qstat = `ssh -l $username $host '$qstat_cmd; exit' 2>&1`;
-    $qstatB = `ssh -l $username $host '$qstat_cmd -B; exit' 2>&1`;
-    $qstatQ = `ssh -l $username $host '$qstat_cmd -Q; exit' 2>&1`;
-?>
-    <h2>Current Job Queue</h2>
-    <!-- 20010510 Chris added links to job id and for deletion. -->
-    <table width=90% align="center" border=0>
-    <?php 
-    $stringarray = explode("\n", $qstat);
-    for ($i = 0; $i < sizeof($stringarray) - 1; $i = $i + 1) {
-	print("<tr>");
-	if ($i == 0) {
-		$stringarray[$i] = str_replace("Job id", "Job-id",
-			$stringarray[$i]);
-		$stringarray[$i] = str_replace("Time Use", "Time-Use",
-			$stringarray[$i]);
-	}
-	$the_new_line = ereg_replace('(  *)', " ", $stringarray[$i]);
-	$line_array = explode(" ", $the_new_line);
-	$jobid = (int) $line_array[0];
-	for ($j = 0; $j < sizeof($line_array); $j = $j + 1) {
-		print('<td align="center">');
-		if ($j == 0 && $i > 1)
-			print("<a href=\"jobstatus.php?jobid=$jobid&host=$host\">
-				$line_array[$j]</a></td>");
-		else
-			print("$line_array[$j]</td>");
-	}
-	if ($username == $line_array[2])
-		print("<td><a href=\"qdel.php?jobid=$jobid&host=$host\">
-		    Delete</a></td>");
-	print("</tr>");
-    }
-    ?>
-    </table>
-
-    <h2>Queue Configuration</h2>
-    <pre><?php echo $qstatQ; ?></pre>
-    <h2>Server Status</h2>
-    <pre><?php echo $qstatB; ?></pre>
+			$qtatQ_arr = parseQstat_Q($qstatQ);
+			foreach ($qtatQ_arr as $keyQ => $valueQ) {
+				if (strcmp($keyQ, "isenable") == 0) 
+					$valueQ = (strcmp($valueQ, "yes") == 0) ? "Enable" : "Disable" ;
+				elseif (strcmp($keyQ, "startedstat") == 0) 
+					$valueQ = (strcmp($valueQ, "yes") == 0) ? "Started" : "Stopped" ;
+				elseif (strcmp($keyQ, "type") == 0) 
+					$valueQ = (strcmp($valueQ, "E") == 0) ? "Execution" : "Routing" ;
+				print("<td align=\"center\">" . $valueQ . "</td>");
+			}
+?>		</tr></table>
+		<h2>Status Host</h2>
+		<table border="1">
+			<tr>
+				<th>Nama Host</th>
+				<th>Jumlah Max Job</th>
+				<th>Jumlah Job dalam Host</th>
+				<th>Jumlah Job yang mengantri</th>
+				<th>Jumlah Job yang berjalan</th>
+				<th>Jumlah Job yang ditahan (hold)</th>
+				<th>Jumlah Job yang menunggu waktu untuk dijalankan</th>
+				<th>Jumlah Job yang sedang dipindahkan</th>
+				<th>Jumlah Job yang menunggu untuk keluar dari host</th>
+				<th>Status Host</th>
+			</tr>
+			<tr>
+<?php 
+		$qtatB_arr = parseQstat_B($qstatB);
+			foreach ($qtatB_arr as $keyB => $valueB) {
+				print("<td align=\"center\">" . $valueB . "</td>");
+			}
+?>		</tr></table>
+		<hr>				
 
 <?php
-  include("navbar.php");
+	include ("footer.php");
 ?>
-<hr>
-<p>Send questions and comments to 
-<?php
-echo "<a href=\"mailto:" . $PBSWEBMAIL . "\">";
-echo $PBSWEBMAIL . "</a>\n";
-?>
-You can find <a href='help.html'>help here </a>.</p>
-<!-- $Id: qstat.php,v 1.13 2004/03/18 21:04:19 platin Exp $ -->
-  </body>
+ 
+		<!-- $Id: qstat.php,v 1.13 2004/03/18 21:04:19 platin Exp $ -->
+	</body>
 </html>

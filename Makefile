@@ -4,10 +4,10 @@
 
 ## The "document root" of the PBSWeb-Lite installation,
 ## all PHP scripts will be installed into this directory.
-INSTALLDIR = /var/www/pbs
+INSTALLDIR = /var/www/lite/v2
 
 ## username that runs apache server.
-HTTPUSER = www-data
+HTTPUSER = apache
 
 ## You don't have to change anything after this line.
 CC = gcc

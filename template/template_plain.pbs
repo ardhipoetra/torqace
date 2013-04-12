@@ -13,3 +13,5 @@ echo Directory is `pwd`
 # Enter the command you want to execute here
 # NOTE: Run jobs with intensive Disk I/O under /scratch
 
+# cobalah 0
+

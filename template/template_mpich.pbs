@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+#PBS -l nodes=4:ppn=1
+#
+
+# Go To working directory, don't change this line
+cd $PBS_O_WORKDIR
+
+# Header Information
+echo Running on master host `hostname`
+echo Time is `date`
+echo Directory is `pwd`
+echo Nodefile: $PBS_NODEFILE
+echo This jobs runs on the following processors:
+echo `cat $PBS_NODEFILE`
+
+# Define number of processors
+NPROCS=`wc -l < $PBS_NODEFILE`
+echo This job has allocated $NPROCS nodes
+
+# mpich compile and run
+# change this can make your program unrunnable
+# change at your own risk
+/opt/mpich2/gnu/bin/mpicc main.c -o main
+/opt/mpiexec/bin/mpiexec main
+
