@@ -48,7 +48,7 @@ include_once ("error.php");
 // $jobinfo['script']:     string, the entire jobscript.
 //
 // added jobinfo properties below
-// 
+// $jobinfo['type']:       string, tipe job "file", "compressed", "array"
 
 // generate a pbs script using $pbsinfo array
 function pbsutils_script($jobinfo) {
@@ -56,6 +56,8 @@ function pbsutils_script($jobinfo) {
 	$jobscript .= "#\n";
 	$jobscript .= "# This script is generated automatically by Torqace.\n";
 	$jobscript .= "#\n";
+	$jobscript .= "# TORQ -t ".$jobinfo['type'];
+	$jobscript .= "\n#\n";
 	//  $jobscript .= "#PBS -S /bin/sh\n";
 	if (isset($jobinfo['name']) && $jobinfo['name'] != "") {
 		$jobscript .= "#PBS -N " . $jobinfo['name'] . "\n";
@@ -155,6 +157,8 @@ function pbsutils_read($filename) {
 	$jobinfo['mail_start'] = "No";
 	$jobinfo['mail'] = "";
 	$jobinfo['script'] = "";
+	
+	$jobinfo['type'] = "file";
 
 	$content = file($filename);
 
@@ -164,6 +168,11 @@ function pbsutils_read($filename) {
 			// header regime ends
 			$header_on = 0;
 		}
+		//parse Torqace keywords
+		if (preg_match("/^#\s+TORQ\s+-t\s+([^\s]+)/", $line, $matches)) {
+			$jobinfo['type'] = $matches[1];
+		}
+		
 		// parse PBS keywords
 		if (preg_match("/^#PBS\s+-N\s+([^\s]+)/", $line, $matches)) {
 			$jobinfo['name'] = $matches[1];

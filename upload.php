@@ -74,7 +74,6 @@ if (!isset($_POST['plabel']) || $_POST['plabel'] == "") {
 
 // prepare a list of existing labels
 $ls_cmd = "ls ~/" . $PBSWEBUSERDIR;
-// $ls_result=`ssh -o PubkeyAuthentication=no -l $username $host '$ls_cmd; exit' 2>&1`;
 $ls_result = `ssh -l $username $host '$ls_cmd; exit' 2>&1`;
 $tmparray = explode("\n", $ls_result);
 $i = 0;
@@ -102,7 +101,8 @@ if (!isset($_FILES['userfile']['tmp_name']) || $_FILES['userfile']['tmp_name'] =
 	}
 }
 
-if (isset($_FILES['userfile']['name']) && strcmp($_FILES['userfile']['name'], "main.c") != 0) {
+if (isset($_FILES['userfile']['name']) && strcmp($_FILES['userfile']['name'], "main.c") != 0 &&
+	ereg(".c$",$_FILES['userfile']['name'])) {
 	$upload_ok = 0;
 	$err_fileNotMain = 1;
 }
@@ -164,6 +164,22 @@ if (sizeof($existing_plabels) > 0) {
 <?php } // PHP: if(sizeof($existing_plabels) > 0) ?>
 	return true;
 	}
+	
+	function ChangeFile() {
+		var id = document.mainform.tipefile.selectedIndex;
+		if (id == 0) {
+			//jika berkas
+			document.getElementById("makerow").style.display = "none";
+			document.getElementById("argrow").style.display = "";
+			// alert('hai');
+		}
+		else {
+			//jika compressed
+			document.getElementById("makerow").style.display = "";
+			document.getElementById("argrow").style.display = "none";
+			// alert('hai2');
+		}
+	}
 	// Stop hiding -->
 </script>
 
@@ -201,15 +217,22 @@ if($upload_ok == 0) {
 	}
 ?>
 <FORM ENCTYPE="multipart/form-data" METHOD="POST" name="mainform" onSubmit="return FormSubmit();">
+<select name="tipefile" onChange="javascript:ChangeFile()">
+	<option value="file">Single File</option>
+	<option value="compressed">Compressed Files</option>
+</select>	
 <table><tr align="left"><th><?php echo $TITLE_UPLOAD; ?>:
 <br>Peringatan:  Harus kurang dari 50 MB!<br></th><td>
 <INPUT TYPE="hidden" name="MAX_FILE_SIZE" value="52428800"/>
 <INPUT TYPE="hidden" name="host" value="<?php echo $PBSWEBDEFAULTHOST; ?>"/>
 <INPUT NAME="userfile" TYPE="file"></td></tr>
+<TR ALIGN="LEFT" id="argrow"><TH>Argumen Program<br></TH>
+<TD><INPUT TYPE="file" NAME="argument"/></TD></TR>
 <TR ALIGN="LEFT"><TH>Masukkan label:<br></TH>
 <TD><INPUT TYPE="text" NAME="plabel"> (string alfanumerik tanpa whitespace)</TD></TR>
-<TR ALIGN="LEFT"><TH>Make?<br></TH>
-<TD><INPUT TYPE="checkbox" NAME="domake" VALUE="Yes">
+<TR ALIGN="LEFT" id="makerow" style="display: none"><TH>Make?<br></TH>
+<TD><INPUT TYPE="checkbox" NAME="domake" VALUE="Yes"> Baca bantuan dalam membuat Makefile  
+	<a href="help/help-make.html">disini</a>
 <tr><td>
 <TR ALIGN="LEFT"><TH>Overwrite?<br></TH>
 <TD><INPUT TYPE="checkbox" NAME="overwrite" VALUE="Yes">
@@ -223,14 +246,34 @@ if($upload_ok == 0) {
 } else {
 // upload_ok==1, we got the upload file!
 
+$domake = $_POST['domake']; 
+$tipe = $_POST['tipefile']; 
 $userfile_name = $_FILES['userfile']['name'];
+$argument_name = ($tipe == "file") ? $_FILES['argument']['name'] : "" ;
 $uploadfile = $PBSWEBTEMPUPLOADDIR . "/" . $username . "/" . $userfile_name;
+$argumentfile = ($tipe == "file") ? $PBSWEBTEMPUPLOADDIR . "/" . $username . "/" . $argument_name 
+									: "" ;
 $dest_dir = $PBSWEBUSERDIR . "/" . $plabel;
 $dest_file = $dest_dir . "/" . $userfile_name;
 $dest_address = $username . "@" . $host . ":~/" . $dest_file;
+$arg_address = $username . "@" . $host . ":~/" . $dest_dir . "/" . $argument_name;
 
 if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 	print "Possible file upload attack!  Here's some debugging info:\n";
+	print_r($_FILES);
+} else {
+	$contents = file_get_contents($uploadfile);
+	
+	//hindari pemanggilan syscall exec dan system (pada C)
+	$pattern = "/\bexec|\bsystem\(/i";
+	if (preg_match($pattern, $contents)) {
+		echo "mengandung exec atau system";
+		$restrict = true;
+	}
+	
+}
+if (!empty($argument_name) && !move_uploaded_file($_FILES['argument']['tmp_name'], $argumentfile)) {
+	print "Kesalahan Upload Argument:\n";
 	print_r($_FILES);
 }
 
@@ -241,20 +284,39 @@ echo "<tr><th align=\x22LEFT\x22>Label:</th><td>$plabel</td></th>";
 echo "<tr><th align=\x22LEFT\x22>Host:</th><td>$host</td></tr></table>";
 
 chmod($uploadfile,0644);
-if($plabel_exist == 1) {
-// nothing to do for a pre-existing dir, but
-// we will need to overwrite a regular file
-	if($first=="-") {
-		$mkdir = `ssh -l "$username" "$host" 'rm -f ~/$dest_dir; mkdir ~/$dest_dir; exit' 2>&1`;
+if (!$restrict) {
+	if($plabel_exist == 1) {
+	// nothing to do for a pre-existing dir, but
+	// we will need to overwrite a regular file
+		if($first=="-") {
+			$mkdir = `ssh -l "$username" "$host" 'rm -f ~/$dest_dir; mkdir ~/$dest_dir; exit' 2>&1`;
+		}
+	} else {
+		$mkdir = `ssh -l "$username" "$host" 'mkdir ~/$dest_dir; exit' 2>&1`;
+	}
+	echo "<pre>$mkdir</pre>";
+	if ($tipe == "file" && !empty($argument_name)) {
+		$securecopy = `scp "$argumentfile" "$arg_address" 2>&1`;
+	}
+	$securecopy = `scp "$uploadfile" "$dest_address" 2>&1`;
+	echo "<pre>$securecopy</pre>";
+	// copy finished, remove the temporary file
+	unlink($uploadfile);
+	
+	# add properties
+	$checkgrep = "grep \"^".$plabel."\\s\" .torqace";
+	$checkgrep = `ssh -l "$username" "$host" 'cd ~/$PBSWEBUSERDIR; $checkgrep ;exit' 2>&1`;
+	$checkgrep = trim($checkgrep);
+	if ($checkgrep == "") {
+		$comm = 'echo "'.$plabel.' '.$tipe.'"';
+		$comm = `ssh -l "$username" "$host" 'cd ~/$PBSWEBUSERDIR; $comm >> .torqace ;exit' 2>&1`;
+	} else {
+		$comm = "sed \"s/$checkgrep/$plabel $tipe/g\" .torqace";
+		$comm = `ssh -l "$username" "$host" 'cd ~/$PBSWEBUSERDIR; $comm > .torqace_;rm .torqace;mv .torqace_ .torqace; exit' 2>&1`;
 	}
 } else {
-	$mkdir = `ssh -l "$username" "$host" 'mkdir ~/$dest_dir; exit' 2>&1`;
+	echo "<pre>Upload Gagal</pre>";
 }
-echo "<pre>$mkdir</pre>";
-$securecopy = `scp "$uploadfile" "$dest_address" 2>&1`;
-echo "<pre>$securecopy</pre>";
-// copy finished, remove the temporary file
-unlink($uploadfile);
 
 # By JYJ 20040105: handle the uploaded file more gracefully; we
 # now handle it based on .tar/.tgz/.tar.gz/.zip
@@ -292,7 +354,9 @@ if ($domake == "Yes") {
 
 echo "<p>\n";
 echo "<b>Langkah berikutnya :</b>\n";
-echo " <a href=\"scriptcreate.php?directory=$plabel&host=$host\">".$TITLE_SCRIPTGEN."</a> | ";
+if (!$restrict) {
+	echo " <a href=\"scriptcreate.php?directory=$plabel&host=$host\">".$TITLE_SCRIPTGEN."</a> | ";
+}
 echo "<a href=\"mainmenu.php\">". $TITLE_MAINMENU . "</a>\n";
 echo "</p>\n";
 

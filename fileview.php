@@ -67,9 +67,15 @@ include ("navbar.php");
     <hr>
 
     <?php
-		$fileview_cmd = "cat ~/" . $PBSWEBUSERDIR . "/" . $filename;
+		$alamat = "~/" . $PBSWEBUSERDIR . "/" . $filename;
+		$fileview_cmd = "cat " . $alamat;
 		$fileview_result = `ssh -l $username $host '$fileview_cmd; exit' 2>&1`;
-		print("<pre>\n$fileview_result\n</pre>");
+		$type = `ssh -l $username $host 'file -bi $alamat; exit' 2>&1`;
+		
+		if (substr($type, 0, 4) == 'text') {
+			print("<pre>\n$fileview_result\n</pre>");	
+		} else print("<pre>\nBerkas bukan berupa teks\n</pre>");
+		
     ?>
     
     <p>

@@ -105,8 +105,12 @@ if (!$_GET['dir']) {
 			echo "<h2>";
 			echo $host . ": " . $dirnow;
 			echo "</h2>";
-
-			$dirlist_cmd = "ls -lA ~/" . $PBSWEBUSERDIR . "/" . $dirnow;
+			if ($dirnow=="") {
+				$dirlist_cmd = "ls -l ~/" . $PBSWEBUSERDIR . "/" . $dirnow;
+			} else {
+				$dirlist_cmd = "ls -lA ~/" . $PBSWEBUSERDIR . "/" . $dirnow;
+			}
+			
 			$dirlist_cmd = $dirlist_cmd . " | sed \"s/ ->.*\$//g\" ";
 			$dirlist_cmd = $dirlist_cmd . " | tr -s \" \" \" \"  | cut -d\" \" -f1,5-";
 			$dirlist_result = `ssh -l $username $host '$dirlist_cmd; exit' 2>&1`;
@@ -146,9 +150,14 @@ if (!$_GET['dir']) {
 							print("<img src=\"img/foldericon.gif\" border=0 alt=\"$fname\">$fname");
 							print("</a>");
 						} else {
-							print("<a href=\"fileview.php?host=$host&filename=$fullname\">");
-							print("<img src=\"img/fileicon.gif\" border=0 alt=\"$fname\">$fname");
-							print("</a>");
+							$alamat = "~/" . $PBSWEBUSERDIR . "/" . $fullname;						
+							$type = `ssh -l $username $host 'file -bi $alamat; exit' 2>&1`;
+							if (substr($type, 0, 4) == 'text') {
+								print("<a href=\"fileview.php?host=$host&filename=$fullname\">");
+								print("<img src=\"img/fileicon.gif\" border=0 alt=\"$fname\">$fname");
+								print("</a>");
+							} else
+								print("<img src=\"img/fileicon.gif\" border=0 alt=\"$fname\">$fname");
 						}
 						print("</td>");
 						print("<td align=\"left\">$fperm</td>");

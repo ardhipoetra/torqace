@@ -302,7 +302,7 @@ return true;
 						<table style="width: 90%; text-align: left; margin-left: auto; margin-right: auto;">
 							<tbody>
 								<tr>
-									<td style="vertical-align: center;"><b>Job name:</b>
+									<td style="vertical-align: center;"><b>Nama Job:</b>
 									<input maxlength="12" name="name" size="12" value="<?php print($jobinfo['name']); ?>">
 									<br>
 									<input value="Yes" name="overwrite" type="checkbox" <?php

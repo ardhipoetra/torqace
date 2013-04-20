@@ -69,6 +69,8 @@ if ($first != "-" && $first != "d") {
 $source = $username . "@" . $host . ":~/" . $PBSWEBUSERDIR . "/" . $filename;
 $dest = $PBSWEBTEMPDOWNLOADDIR . "/" . $username;
 $localfile = $dest . "/" . $filebasename;
+$dellocat = $PBSWEBDIR . "/" . $localfile;
+$dellpasca = $PBSWEBDIR . "/" . $dest;
 clearstatcache();
 if (!file_exists($PBSWEBTEMPDOWNLOADDIR)) {
 	mkdir($PBSWEBTEMPDOWNLOADDIR, 0755);
@@ -76,7 +78,7 @@ if (!file_exists($PBSWEBTEMPDOWNLOADDIR)) {
 if (!file_exists($dest)) {
 	mkdir($dest, 0755);
 }
-$scp_result = `rm -rf $localfile; scp -r "$source" "$localfile" 2>&1`;
+$scp_result = `rm -rf $dellocat; scp -r "$source" "$localfile";2>&1`;
 
 if (!file_exists($localfile)) {
 	error_page("File copy error: $scp_result.");
@@ -108,8 +110,7 @@ if ($first == "-") {
 			<BR>
 			<BR>
 			<SCRIPT language="JavaScript">
-location.replace("<?php print($filelink); ?>
-				");
+				location.replace("<?php print($filelink); ?>");
 			</SCRIPT>
 			<A href="<?php print($filelink); ?>">Click here to download manually</A>
 		</CENTER>

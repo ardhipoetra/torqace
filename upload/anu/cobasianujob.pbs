@@ -1,0 +1,28 @@
+#!/bin/sh --login
+#
+# This script is generated automatically by PBSWeb-Lite.
+#
+#PBS -N cobasianujob
+#PBS -l nodes=1:ppn=1
+#PBS -M anu@wolf
+#
+
+
+cd $PBS_O_WORKDIR
+
+# Header Information
+echo Running on master host `hostname`
+echo Time is `date`
+echo Directory is `pwd`
+echo Nodefile: $PBS_NODEFILE
+echo This jobs runs on the following processors:
+echo `cat $PBS_NODEFILE`
+# Define number of processors
+NPROCS=`wc -l < $PBS_NODEFILE`
+echo This job has allocated $NPROCS nodes
+
+. /opt/torque/etc/openmpi-setup.sh
+mpicc main.c -o main
+mpirun -machinefile $PBS_NODEFILE main
+
+

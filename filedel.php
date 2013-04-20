@@ -1,11 +1,12 @@
 <?php /*
 
- PBSWeb-Lite: A Simple Web-based Interface to PBS
+ Torqace : Torque Interface
 
- Copyright (C) 2003, 2004 Yuan-Chung Cheng
+ Copyright (C) 2013, Ardhi Putra Pratama
 
+ Torqace is based on the PBSWeb-Lite code written by Yuan-Chung Cheng.
  PBSWeb-Lite is based on the PBSWeb code written by Paul Lu et al.
- See History for more detailes.
+ See History for more details.
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -46,9 +47,9 @@ $filename=preg_replace("/\s/", "", $filename); // white space is not welcome!
 $filename=preg_replace("/\/+$/", "", $filename);
 $filename=preg_replace("/^\/+/", "", $filename);
 if(strpos($filename,"/")) {
-$dirup=preg_replace("/\/.*$/", "", $filename);
+	$dirup=preg_replace("/\/.*$/", "", $filename);
 } else {
-$dirup="";
+	$dirup="";
 }
 
 if(!isset($_GET['confirmed']) || $_GET['confirmed'] != "YES") {
@@ -60,13 +61,9 @@ if(!isset($_GET['confirmed']) || $_GET['confirmed'] != "YES") {
 	<body bgcolor="white">
 		<script language="JavaScript">
 			if (confirm("Are you absolutely sure you want to delete <?php print("$filename on $host"); ?> ?"))
-				location.replace(" 
-					<?php print("filedel.php?confirmed=YES&filename=$filename&host=$host"); ?> 
-				");
+				location.replace(' <?php print("filedel.php?confirmed=YES&filename=$filename&host=$host"); ?> ');
 			else
-				location.replace("
-					<?php print("dirview.php?host=$host&dir=$dirup"); ?>
-				");
+				location.replace('<?php print("dirview.php?host=$host&dir=$dirup"); ?>');
 		</script>
 	</body>
 </html>
