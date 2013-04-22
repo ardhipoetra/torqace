@@ -43,11 +43,16 @@ $username = $_SESSION['username'];
 
 // need to get host and directory from either GET or POST
 if (!(isset($_REQUEST['host']) && isset($_REQUEST['directory']))) {
-	error_page("Error: Host dan/atau Dir tidak tersedia.");
+	error_page("Error: no host and directory specified.");
 	exit();
 } else {
 	$host = $_REQUEST['host'];
 	$directory = $_REQUEST['directory'];
+	
+	$checkgrep = "grep \"^".substr($directory,1)."\\s\" .torqace";
+	$checkgrep = `ssh -l "$username" "$host" 'cd ~/$PBSWEBUSERDIR; $checkgrep ;exit' 2>&1`;
+	$checkgrep = explode(' ',trim($checkgrep));
+	$tipe = $checkgrep[1];
 }
 
 if (isset($PBSWEBHOSTLIST[$host]['max_nodes'])) {
@@ -94,7 +99,7 @@ if (isset($_POST['overwrite'])) {
 // $operation == "Load a Previous Job"
 // $operation == "Load"
 $operation = $_POST['operation'];
-if ($operation != "Load Job yang sudah ada" && $operation != "Load") {
+if ($operation != "Load a Previous Job" && $operation != "Load") {
 	$operation == "New";
 }
 
@@ -113,7 +118,7 @@ foreach ($lsarray as $line) {
 
 if ($operation == "Load") {
 	if (!$_POST['loadjob']) {
-		error_page("Error : nama job tidak ada.");
+		error_page("Error: job name is required.");
 		exit();
 	}
 	$jobname = $_POST['loadjob'];
@@ -124,7 +129,7 @@ if ($operation == "Load") {
 	$jobinfo = pbsutils_read($localfile);
 }
 
-if ($operation != "Load Job yang sudah ada") {
+if ($operation != "Load a Previous Job") {
 	// prepare template list; this re-read every time is a waste
 	// of time, later we should find a more efficient solution.
 	$templates = array();
@@ -173,20 +178,20 @@ if (sizeof($pbsjobs) > 0) {
 		nameval = document.mainform.name.value;
 
 		if (nameval == '') {
-			alert('Isilah Nama job.');
+			alert('Job name is a required field, please try again.');
 			return false;
 		}
 		for (var i = 0; i < nameval.length; i++) {
 			var letter = nameval.charAt(i);
 			if (invalidchars.indexOf(letter) != -1) {
-				alert("Nama Job \"" + nameval + "\" mengandung karakter invalid.");
+				alert("Job name \""+nameval+"\" contains invalid characters."); 
 				return false;
 			}
 		}
 
-		if (!confirm("Submit job \"" + nameval + "\" ke queue?")) {
-			return false;
-		}
+		if (!confirm("Submit job \""+nameval+"\" to queue?")) {
+	    	return false;
+	    }
 
 <?php
 	if(sizeof($pbsjobs) > 0) {
@@ -194,7 +199,7 @@ if (sizeof($pbsjobs) > 0) {
 	if (!overwriteval) {
 		for (var i = 0; i < num_jobs; i++) {
 			if (nameval == existing_jobs[i]) {
-				alert("Job \"" + nameval + "\" sudah ada, ganti atau ceklist overwrite.");
+				alert("Job name \""+nameval+"\" already exists, please use another name or submit with the overwrite box checked."); 
 				return false;
 			}
 		}
@@ -258,14 +263,14 @@ return true;
 						<td>
 						<br>
 						<?php
-						if($operation == "Load Job yang sudah ada") {
+						if($operation == "Load a Previous Job") {
 						// menu for loading an old job
 						?>
 						<table style="width: 90%; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellspacing="0" cellpadding="0">
 							<tbody>
 								<tr>
 									<td style="text-align: center; vertical-align: middle;">
-									<input name="operation" value="Job Baru" type="submit" onClick="document.pressed=this.value">
+									<input name="operation" value="New Job" type="submit" onClick="document.pressed=this.value">
 									<br>
 									<br>
 									</td>
@@ -299,23 +304,24 @@ return true;
 							// $operation != "Load a Previous Job",,
 							// output the case for a new job
 						?>
+						<h3>Project Type : <?php echo $tipe; ?></h3>
 						<table style="width: 90%; text-align: left; margin-left: auto; margin-right: auto;">
 							<tbody>
 								<tr>
-									<td style="vertical-align: center;"><b>Nama Job:</b>
+									<td style="vertical-align: center;"><b>Job Name:</b>
 									<input maxlength="12" name="name" size="12" value="<?php print($jobinfo['name']); ?>">
 									<br>
 									<input value="Yes" name="overwrite" type="checkbox" <?php
 										if ($overwrite == "Yes") { print("checked");
 										}
- ?>>
-									Overwrite job yang telah ada.
+ 									?>>
+									Overwrite existing job.
 									<br>
 									<br>
 									</td>
 								</tr>
 								<tr>
-									<td style="vertical-align: center;"><b>Ganti Template:</b>
+									<td style="vertical-align: center;"><b>Change Template:</b>
 									<select name="template" onChange="javascript:LoadTemplate()">
 										<option value="none">------</option>
 										<?php
@@ -332,18 +338,18 @@ return true;
 									<br>
 									<br>
 									<td style="vertical-align: top;">
-									<input name="operation" type="submit" value="Load Job yang sudah ada" onClick="document.pressed=this.value">
+									<input name="operation" type="submit" value="Load a Previous Job" onClick="document.pressed=this.value">
 									</td>
 								</tr>
 							</tbody>
 						</table> <?php } // end if($operation == "Load a Previous Job")... ?>
 						<br>
 						</td>
-						<td colspan="1" rowspan="2"><b>Perintah yang akan dijalankan:</b>
+						<td colspan="1" rowspan="2"><b>Execution Commands:</b>
 						<br>
 						<textarea wrap="off" cols="65" rows="25" name="script"><?php print($jobinfo['script']); ?></textarea>
 						<br>
-						<b><em>(Gunakan Script GNU Bourne-Again Shell (Bash))</em></b></td>
+						<b><em>(Please Use GNU Bourne-Again Shell Script (BASH))</em></b></td>
 					</tr>
 					<tr>
 						<td><b>Job Options</b>
@@ -351,7 +357,7 @@ return true;
 						<table style="text-align: left; width: 100%;">
 							<tbody>
 								<tr>
-									<td style="vertical-align: middle; text-align: left;">Masukkan ke dalam queue:</td>
+									<td style="vertical-align: middle; text-align: left;">Queue to submit job to:</td>
 									<td style="vertical-align: middle; text-align: left;">
 									<select name="queue">
 										<option value="">Default </option>
@@ -367,7 +373,7 @@ return true;
 									</select></td>
 								</tr>
 								<tr>
-									<td style="vertical-align: middle; text-align: left;">Jumlah node:</td>
+									<td style="vertical-align: middle; text-align: left;">Number of nodes to use:</td>
 									<td style="vertical-align: middle; text-align: left;">
 									<select name="nodes">
 										<?php
@@ -383,7 +389,7 @@ return true;
 								</tr>
 								<tr>
 
-									<td style="vertical-align: middle; text-align: left;">Jumlah Processor(s):</td>
+									<td style="vertical-align: middle; text-align: left;">Processor(s) per node:</td>
 									<td style="vertical-align: middle; text-align: left;">
 									<select name="ppn">
 										<?php
@@ -399,17 +405,17 @@ return true;
 
 								</tr>
 								<tr>
-									<td style="vertical-align: middle; text-align: left;">Walltime maksimum:
-									<br> (JJ:MM:DD)</td>
+									<td style="vertical-align: middle; text-align: left;">Maximum Walltime:
+									<br> (HH:MM:SS)</td>
 									<td style="vertical-align: middle; text-align: left;">
 									<input
 									type="text" name="maxtime" value="<?php print($jobinfo['maxtime']); ?>" size="8" maxlength="8">
-									<br> (00:00:00 = tak ada limit) <br>
+									<br> (00:00:00 = no time limit) <br>
 									</td>
 								</tr>
 
 								<tr>
-									<td style="vertical-align: middle; text-align: left;">Gabungkan output dan error dalam 1 berkas </td>
+									<td style="vertical-align: middle; text-align: left;">Merge output dan error in 1 file </td>
 									<td style="vertical-align: middle; text-align: left;">
 									<input
 									type="checkbox" name="merge" value="Yes" <?php
@@ -419,48 +425,54 @@ return true;
 									</td>
 								</tr>
 								<tr>
-									<td style="vertical-align: middle; text-align: left;">Kirim pesan ketika:</td>
+									<td style="vertical-align: middle; text-align: left;">Send message when job:</td>
 									<td style="vertical-align: middle; text-align: left;">
 									<input type="checkbox" name="mail_abort" value="Yes" <?php
 										if ($jobinfo['mail_abort'] == "Yes") { print("checked");
 										}
  ?>>
-									Batal
+									Abort
 									<input type="checkbox" name="mail_end" value="Yes" <?php
 										if ($jobinfo['mail_end'] == "Yes") { print("checked");
 										}
  ?>>
-									Selesai
+									End
 									<input type="checkbox" name="mail_start" value="Yes" <?php
 										if ($jobinfo['mail_start'] == "Yes") { print("checked");
 										}
  ?>>
-									Mulai</td>
+									Start</td>
 
 								</tr>
 								<tr>
-									<td style="vertical-align: middle; text-align: left;">Kirim pesan ke:</td>
+									<td style="vertical-align: middle; text-align: left;">Send message to:</td>
 									<td style="vertical-align: middle; text-align: left;">
 									<input
 									type="text" name="mail" value="<?php print($jobinfo['mail']); ?>" size="20">
 									</td>
 								</tr>
+								<?php if($tipe == "array") : ?>
+								<tr name="arroptions" id="arroptions">
+									<td style="vertical-align: middle; text-align: left;">Array Options :</td>
+									<td style="vertical-align: middle; text-align: left;">
+									<input type="text" name="arroption" >
+									</td>
+								</tr>
+								<?php endif; ?>
 							</tbody>
 						</table>
 						<br>
 						</td>
 					</tr>
 					<tr>
-						<?php
-						if($operation != "Load Job yang sudah ada") {
-						?>
+						<?php if($operation != "Load a Previous Job") : ?>
+						<input type="hidden" value="<?php echo $tipe; ?>" name="tipefile"/>
 						<td colspan="2" rowspan="1">
 							<input name="operation" type="submit" onClick="document.pressed=this.value" value="Submit Job">
 						<br>
-						<?php } ?> </td>
+						<?php endif; ?> </td>
 					</tr>
 					<tr></tr>
-
 				</tbody>
 			</table>
 		</form>

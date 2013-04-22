@@ -26,11 +26,11 @@
 ?>
 
 <p>
-	Kirim pertanyaan dan komentar ke 
+	Send questions and comments to 
 	<?php
 		include_once("config.php");
 		echo "<a href=\"mailto:" . $PBSWEBMAIL . "\">";
 		echo $PBSWEBMAIL . "</a>\n";
 	?>
-	Dapatkan bantuan <a href='help/index.html'>disini </a>.
+	You can find <a href='help/index.html'>help here </a>.
 </p>

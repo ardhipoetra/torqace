@@ -1,11 +1,12 @@
 <?php /*
 
- PBSWeb-Lite: A Simple Web-based Interface to PBS
+ Torqace : Torque Interface
 
- Copyright (C) 2003, 2004 Yuan-Chung Cheng
+ Copyright (C) 2013, Ardhi Putra Pratama
 
+ Torqace is based on the PBSWeb-Lite code written by Yuan-Chung Cheng.
  PBSWeb-Lite is based on the PBSWeb code written by Paul Lu et al.
- See History for more detailes.
+ See History for more details.
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -74,7 +75,7 @@ include ("navbar.php");
 		
 		if (substr($type, 0, 4) == 'text') {
 			print("<pre>\n$fileview_result\n</pre>");	
-		} else print("<pre>\nBerkas bukan berupa teks\n</pre>");
+		} else print("<pre>\nFile type is not text\n</pre>");
 		
     ?>
     

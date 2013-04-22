@@ -97,12 +97,7 @@ $filedel_result = `ssh -l $username $host "$filedel_cmd; exit" 2>&1`;
 	?>
 
 		<hr>
-		<p>Send questions and comments to
-	<?php 
-		echo "<a href=\"mailto:" . $PBSWEBMAIL . "\">";
-		echo $PBSWEBMAIL . "</a>\n";
-	?>
-		You can find <a href='help.html'>help here </a>.</p>
+		<? include_once("footer.php"); ?>
 		<script language="JavaScript">
 			location.replace("<?php print("dirview.php?host=$host&dir=$dirup"); ?> ");
 		</script>

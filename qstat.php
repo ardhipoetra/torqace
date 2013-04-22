@@ -47,7 +47,7 @@ if (!$_POST['host']) {
 }
 
 if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] == "") {
-	error_page("Gagal membuka qstat");
+	error_page("Failed retrieving qstat command");
 	exit();
 } else {
 	$qstat_cmd = $PBSWEBHOSTLIST[$host]["qstat"];
@@ -98,21 +98,21 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 			$qstatB = `ssh -l $username $host '$qstat_cmd -B; exit' 2>&1`;
 			$qstatQ = `ssh -l $username $host '$qstat_cmd -Q; exit' 2>&1`;
 		?>
-		<h2>Queue yang sedang/baru berjalan</h2>
+		<h2>Current/Running Job Queue</h2>
 		<!-- 20010510 Chris added links to job id and for deletion. -->
 		<table width=90% border=1>
 			<?php 
 			$stringarray = explode("\n", $qstat);
-			if (sizeof($stringarray) - 1 <= 0) print("Tidak ada Queue yang dapat dilihat\n");
+			if (sizeof($stringarray) - 1 <= 0) print("Queue is empty \n");
 			else {
 			?>
 				<tr>
-				<th>ID Job</th>
-				<th>Nama Job</th>
-				<th>User yang menjalankan</th>
-				<th>Waktu yang dipakai</th>
+				<th>Job ID</th>
+				<th>Job name</th>
+				<th>Run as</th>
+				<th>Running time</th>
 				<th>Status</th>
-				<th>Queue yang dipakai</th>
+				<th>In queue</th>
 				<!--<th>Action</th> -->
 				</tr>
 			<?php
@@ -131,9 +131,9 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 					if ($j == 0)
 						print("<a href=\"jobstatus.php?jobid=$jobid&host=$host\">$line_array[$j]</a></td>");
 					elseif ($j == 4) {
-						if ($line_array[$j] == "C") print("Selesai</td>");
-						elseif ($line_array[$j] == "R") print("Sedang Berjalan</td>");
-						elseif ($line_array[$j] == "Q") print("Mengantri</td>");
+						if ($line_array[$j] == "C") print("Completed</td>");
+						elseif ($line_array[$j] == "R") print("Running</td>");
+						elseif ($line_array[$j] == "Q") print("Queued</td>");
 					}
 					elseif ($j==6 && $username == $line_array[2]) {
 						//print("<a href=\"qdel.php?jobid=$jobid&host=$host\">Delete</a></td>");
@@ -146,21 +146,21 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 			?>
 		</table>
 
-		<h2>Status Queue</h2>
+		<h2>Queue Status</h2>
 		<table border="1">
 			<tr>
-				<th>Nama Queue</th>
-				<th>Jumlah Max Job</th>
-				<th>Jumlah Job dalam Queue</th>
+				<th>Queue name</th>
+				<th>Max Job that may be run concurrently</th>
+				<th>Job in Queue</th>
 				<th>Status (Enable/Disable)</th>
 				<th>Status (Started/Stopped)</th>
-				<th>Jumlah Job yang mengantri</th>
-				<th>Jumlah Job yang berjalan</th>
-				<th>Jumlah Job yang ditahan (hold)</th>
-				<th>Jumlah Job yang menunggu waktu untuk dijalankan</th>
-				<th>Jumlah Job yang sedang dipindahkan</th>
-				<th>Jumlah Job yang menunggu untuk keluar dari queue</th>
-				<th>Tipe Queue (Execution/Routing)</th>
+				<th>Queued job</th>
+				<th>Running Job</th>
+				<th>Held Job</th>
+				<th>Waiting for execution Job</th>
+				<th>Moving Job</th>
+				<th>Exiting Job</th>
+				<th>Queue Type (Execution/Routing)</th>
 			</tr>
 			<tr>
 <?php 
@@ -175,19 +175,19 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 				print("<td align=\"center\">" . $valueQ . "</td>");
 			}
 ?>		</tr></table>
-		<h2>Status Host</h2>
+		<h2>Host Status</h2>
 		<table border="1">
 			<tr>
-				<th>Nama Host</th>
-				<th>Jumlah Max Job</th>
-				<th>Jumlah Job dalam Host</th>
-				<th>Jumlah Job yang mengantri</th>
-				<th>Jumlah Job yang berjalan</th>
-				<th>Jumlah Job yang ditahan (hold)</th>
-				<th>Jumlah Job yang menunggu waktu untuk dijalankan</th>
-				<th>Jumlah Job yang sedang dipindahkan</th>
-				<th>Jumlah Job yang menunggu untuk keluar dari host</th>
-				<th>Status Host</th>
+				<th>Host name</th>
+				<th>Max Job that can run concurrently</th>
+				<th>Total Job</th>
+				<th>Queued job</th>
+				<th>Running Job</th>
+				<th>Held Job</th>
+				<th>Waiting for execution Job</th>
+				<th>Moving Job</th>
+				<th>Exiting Job</th>
+				<th>Host Status</th>
 			</tr>
 			<tr>
 <?php 

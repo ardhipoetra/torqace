@@ -74,6 +74,11 @@ if ($qsub_cmd == "") {
 	error_page("Error: can't retrieve command for qsub.");
 	exit();
 }
+
+if ($jobinfo['type'] == "array") {
+	$qsub_cmd .= " -t ".$_POST['arroption'];
+}
+
 $qsub_result = `ssh -l $username $host 'cd ~/$PBSWEBUSERDIR/$directory; $qsub_cmd $jobfile; exit' 2>&1`;
 $tmparray = explode(".", trim($qsub_result));
 $jobid = $tmparray[0];
@@ -98,18 +103,18 @@ $jobid = $tmparray[0];
 		//print_r($_POST);
 		//echo "</pre>";
 
-		echo "<p><b>Nama Job:</b> " . $jobinfo['name'] . "</p>\n";
-		echo "<p><b>Host:</b> $host</p>\n";
-		echo "<p><b>Direktori Job:</b> $directory</p>\n";
-		echo "<p><b>Job ID Torque:</b> $jobid</p>\n";
-		echo "<p><b>Nama berkas job script:</b> $jobfile</p>\n";
-		echo "<p><b>Isi Job script:</b>\n";
+		echo "<p><b>Job Name:</b> " . $jobinfo['name'] . "</p>\n";
+		echo "<p><b>Server:</b> $host</p>\n";
+		echo "<p><b>Directory:</b> $directory</p>\n";
+		echo "<p><b>Torque Job ID:</b> $jobid</p>\n";
+		echo "<p><b>Job Script Filename:</b> $jobfile</p>\n";
+		echo "<p><b>Job Script Contents:</b>\n";
 		echo "<pre>\n";
 		echo "$jobscript_str\n";
 		echo "</pre>\n";
 		echo "<br><br>\n";
 		echo "<p>\n";
-		echo "<b>Langkah berikutnya :</b>  <a href=qstat.php?host=$host>Lihat Queue</a>";
+		echo "<b>Suggested Next Step:</b>  <a href=qstat.php?host=$host>View Queue Status</a>";
 		echo "</p>\n";
 		?>
 		<hr>

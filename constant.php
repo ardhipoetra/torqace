@@ -25,11 +25,11 @@
  */
 ?>
 <?php
-    $TITLE_UPLOAD = "Unggah Berkas/Project";
-	$TITLE_INDEX = "Halaman Login";
-	$TITLE_MAINMENU = "Menu Utama";
-	$TITLE_SCRIPTGEN = "Buat Script Torque";
+    $TITLE_UPLOAD = "Upload File/Project";
+	$TITLE_INDEX = "Login to Torqace";
+	$TITLE_MAINMENU = "Main Menu";
+	$TITLE_SCRIPTGEN = "Generate Torque Script";
 	$TITLE_SCRIPTVIEW = "Script Review Torque";
-	$TITLE_VIEWDIR = "Lihat Berkas/Project";
-	$TITLE_QSTAT = "Status Queue";
+	$TITLE_VIEWDIR = "View File/Project";
+	$TITLE_QSTAT = "Queue Status";
 ?>

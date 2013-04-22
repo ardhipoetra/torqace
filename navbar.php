@@ -35,8 +35,8 @@
 		<a href="upload.php"><?php echo $TITLE_UPLOAD; ?></a> || <!--
 		<a href="dirselect.php?action=compile">Compile Uploaded Files</a> ||
 		<a href="dirselect.php?action=script">Script Creation and Submission</a> ||
-		<a href="qstat.php">PBS Queue Information</a> ||
 		-->
+		<a href="qstat.php"><?php echo $TITLE_QSTAT; ?></a> ||
 		<a href="dirview.php"><?php echo $TITLE_VIEWDIR; ?></a> || <!-- <a href="index.html">Login</a> ||
 		-->
 		<a href="logout.php">Logout</a>

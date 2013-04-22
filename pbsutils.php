@@ -257,6 +257,11 @@ function pbsutils_collect(&$jobinfo, $databank) {
 		$script_str = str_replace("\\\"", "\"", $script_str);
 		$jobinfo['script'] = $script_str;
 	}
+	
+	if (isset($databank['tipefile'])) {
+		$jobinfo['type'] = $databank['tipefile'];
+	}
+	
 }
 
 // parse qstat (lihat stat jobs) supaya ke array untuk reformatting

@@ -81,12 +81,7 @@ include ("navbar.php");
 	include ("navbar.php");
 ?>
 <hr>
-<p>Send questions and comments to 
-<?php
-	echo "<a href=\"mailto:" . $PBSWEBMAIL . "\">";
-	echo $PBSWEBMAIL . "</a>\n";
-?>
-You can find <a href='help.html'>help here </a>.</p>
+<? include_once("footer.php"); ?>
 <!-- $Id: jobstatus.php,v 1.12 2004/03/18 21:04:19 platin Exp $ -->
 </body>
 </html>

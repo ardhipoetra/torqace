@@ -102,6 +102,13 @@ if ($first == "-") {
 	<HEAD>
 		<!-- Let JavaScript do the automatic location change for us -->
 		<!-- <META http-equiv="Refresh" content="0; URL=/"> -->
+			<script type="application/javascript">
+				var el = document.getElementById('dl');
+					el.onclick = close();
+				function close() {
+					self.close();
+				}
+			</script>
 	</HEAD>
 	<BODY>
 		<CENTER>
@@ -112,7 +119,7 @@ if ($first == "-") {
 			<SCRIPT language="JavaScript">
 				location.replace("<?php print($filelink); ?>");
 			</SCRIPT>
-			<A href="<?php print($filelink); ?>">Click here to download manually</A>
+			<A href="<?php print($filelink); ?>" id="dl">Click here to download manually</A>
 		</CENTER>
 	</BODY>
 </HTML>

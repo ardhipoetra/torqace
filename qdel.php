@@ -1,11 +1,12 @@
 <?php /*
 
- PBSWeb-Lite: A Simple Web-based Interface to PBS
+ Torqace : Torque Interface
 
- Copyright (C) 2003, 2004 Yuan-Chung Cheng
+ Copyright (C) 2013, Ardhi Putra Pratama
 
+ Torqace is based on the PBSWeb-Lite code written by Yuan-Chung Cheng.
  PBSWeb-Lite is based on the PBSWeb code written by Paul Lu et al.
- See History for more detailes.
+ See History for more details.
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -94,13 +95,7 @@ if (!isset($PBSWEBHOSTLIST[$host]["qdel"]) || $PBSWEBHOSTLIST[$host]["qdel"] == 
 			<a href="qstat.php">Back to Queue Status</a>
 		</p>
 		<hr>
-		<p>
-			Send questions and comments to
-			<?php
-				echo "<a href=\"mailto:" . $PBSWEBMAIL . "\">";
-				echo $PBSWEBMAIL . "</a>\n";
-			?> You can find <a href='help.html'>help here </a>.
-		</p>
+		<? include_once("footer.php"); ?>
 		<!-- $Id: qdel.php,v 1.9 2004/03/18 21:04:19 platin Exp $ -->
 	</body>
 </html>

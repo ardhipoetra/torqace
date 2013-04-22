@@ -29,6 +29,7 @@
 // A simple file manager used to manage the files under ~/pbsweb
 //
 include_once ("config.php");
+include_once 'constant.php';
 
 session_name($PBSWEBNAME);
 session_set_cookie_params($PBSWEBEXPTIME, $PBSWEBPATH);
@@ -73,7 +74,7 @@ if (!$_GET['dir']) {
 		<title>Lihat Berkas</title>
 	</head>
 	<body bgcolor="white">
-		<h1><img src="<?php echo $PBSWEBHEADERLOGO; ?>" border="0" height="102" width="92" alt="PBS Logo">Lihat Berkas </h1>
+		<h1><img src="<?php echo $PBSWEBHEADERLOGO; ?>" border="0" height="102" width="92" alt="PBS Logo"><?php echo $TITLE_VIEWDIR; ?></h1>
 
 		<?php /* Put standard navigation menu */
 			include ("navbar.php");
@@ -170,7 +171,7 @@ if (!$_GET['dir']) {
 						print("&nbsp;&nbsp;<a href=\"filedel.php?host=$host&filename=$fullname\">Delete</a>&nbsp;&nbsp;");
 						print("</td>");
 						print("<td align=\"center\">");
-						if ($first == "d") {
+						if ($first == "d" && substr($fullname, 0, 1) == "/") {
 							print("&nbsp;&nbsp;<a href=\"scriptcreate.php?directory=$fullname&host=$host\">Generate Script</a>&nbsp;&nbsp;");
 						}						
 						print("</td>");
@@ -184,14 +185,7 @@ if (!$_GET['dir']) {
 		include ("navbar.php");
 		?>
 		<hr>
-		<p>
-			Send questions and comments to
-			<?php
-				echo "<a href=\"mailto:" . $PBSWEBMAIL . "\">";
-				echo $PBSWEBMAIL . "</a>\n";
-			?>
-			You can find <a href='help.html'>help here </a>.
-		</p>
+		<?php include_once 'footer.php'; ?>
 		<!-- $Id: dirview.php,v 1.8 2004/03/18 21:04:19 platin Exp $ -->
 	</body>
 </html>

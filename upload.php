@@ -139,13 +139,13 @@ if (sizeof($existing_plabels) > 0) {
 		plabelval = document.mainform.plabel.value;
 
 		if (plabelval == '') {
-			alert('Isilah label program/project');
+			alert('Program label is a required field, please try again.');
 			return false;
 		}
 		for (var i = 0; i < plabelval.length; i++) {
 			var letter = plabelval.charAt(i);
 			if (invalidchars.indexOf(letter) != -1) {
-				alert("Label \"" + plabelval + "\" mengandung karakter yang invalid.");
+				alert("Program label \""+plabelval+"\" contains invalid characters.");
 				return false;
 			}
 		}
@@ -156,7 +156,7 @@ if (sizeof($existing_plabels) > 0) {
 	if (!overwriteval) {
 		for (var i = 0; i < num_plabels; i++) {
 			if (plabelval == existing_plabels[i]) {
-				alert("Label \"" + plabelval + "\" sudah ada, ceklist overwrite jika diinginkan.");
+				alert("Program label \""+plabelval+"\" already exists, please use another label or submit with the overwrite box checked."); 
 				return false;
 			}
 		}
@@ -171,13 +171,26 @@ if (sizeof($existing_plabels) > 0) {
 			//jika berkas
 			document.getElementById("makerow").style.display = "none";
 			document.getElementById("argrow").style.display = "";
+			document.getElementById("argprogtxt").innerHTML = "Program Argument(Not Compressed)";
+			document.getElementById("infoCompress").style.display = "none";
+			document.getElementById("infoArr").style.display = "none";
 			// alert('hai');
 		}
-		else {
+		else if(id == 1) {
 			//jika compressed
 			document.getElementById("makerow").style.display = "";
 			document.getElementById("argrow").style.display = "none";
+			document.getElementById("argprogtxt").innerHTML = "Program Argument";
+			document.getElementById("infoCompress").style.display = "";
+			document.getElementById("infoArr").style.display = "none";
 			// alert('hai2');
+		} else if(id == 2) {
+			document.getElementById("makerow").style.display = "";
+			document.getElementById("argrow").style.display = "";
+			document.getElementById("argprogtxt").innerHTML = "Program Argument";
+			document.getElementById("infoCompress").style.display = "";
+			document.getElementById("infoArr").style.display = "";
+			
 		}
 	}
 	// Stop hiding -->
@@ -197,22 +210,23 @@ if($upload_ok == 0) {
 // print the upload form
 	if($err_invalid_plabel==1) {
 		print("<p><font color=\"red\">");
-		print("Label harus diisi dengan alfanumerik");
+		print("You must provide a continuous alpha-numeric string as the program label!");
 		print("</font></p>\n");
 	}
 	if($err_conflict_plabel==1) {
 		print("<p><font color=\"red\">");
-		print("Label telah ada, mungkin mau overwrite?");
+		print("Program label exists, please provide another label or submit again with overwrite box checked to ");
+		print("save the uploaded files under an old label (might overwrite files with the same name).");
 		print("</font></p>\n");
 	}
 	if($err_nofile==1) {
 		print("<p><font color=\"red\">");
-		print("Upload error, mungkin berkas terlalu besar.");
+		print("File upload error, maybe your file is too big.");
 		print("</font></p>\n");
 	}
 	if($err_fileNotMain==1) {
 		print("<p><font color=\"red\">");
-		print("Nama Berkas harus main.c (untuk MPI)");
+		print("For MPI in C, the name of program must be main.c");
 		print("</font></p>\n");
 	}
 ?>
@@ -220,27 +234,30 @@ if($upload_ok == 0) {
 <select name="tipefile" onChange="javascript:ChangeFile()">
 	<option value="file">Single File</option>
 	<option value="compressed">Compressed Files</option>
+	<option value="array">Array</option>
 </select>	
 <table><tr align="left"><th><?php echo $TITLE_UPLOAD; ?>:
-<br>Peringatan:  Harus kurang dari 50 MB!<br></th><td>
+<br>Warning:  Must be less than 50 MB!<br></th><td>
 <INPUT TYPE="hidden" name="MAX_FILE_SIZE" value="52428800"/>
 <INPUT TYPE="hidden" name="host" value="<?php echo $PBSWEBDEFAULTHOST; ?>"/>
 <INPUT NAME="userfile" TYPE="file"></td></tr>
-<TR ALIGN="LEFT" id="argrow"><TH>Argumen Program<br></TH>
-<TD><INPUT TYPE="file" NAME="argument"/></TD></TR>
-<TR ALIGN="LEFT"><TH>Masukkan label:<br></TH>
-<TD><INPUT TYPE="text" NAME="plabel"> (string alfanumerik tanpa whitespace)</TD></TR>
+<TR ALIGN="LEFT" id="argrow"><TH id="argprogtxt">Program Argument(Not Compressed)</TH>
+	<TD><INPUT TYPE="file" NAME="argument"/>
+		<div id="infoArr" style="display: none">Read about array arguments 
+			<a href="help/help-arrInput.html">here</a></div></TD></TR>
+	<TR ALIGN="LEFT"><TH>Enter a Label:<br></TH>
+	<TD><INPUT TYPE="text" NAME="plabel">  (continuous alpha-numeric string)</TD></TR>
 <TR ALIGN="LEFT" id="makerow" style="display: none"><TH>Make?<br></TH>
-<TD><INPUT TYPE="checkbox" NAME="domake" VALUE="Yes"> Baca bantuan dalam membuat Makefile  
-	<a href="help/help-make.html">disini</a>
-<tr><td>
+	<TD><INPUT TYPE="checkbox" NAME="domake" VALUE="Yes">Read about how to create Makefile  
+		<a href="help/help-make.html">here</a>
+	</td></tr>
 <TR ALIGN="LEFT"><TH>Overwrite?<br></TH>
 <TD><INPUT TYPE="checkbox" NAME="overwrite" VALUE="Yes">
 <tr><td>
 <br><INPUT TYPE="submit" name="operation" VALUE="Submit"></td></tr>
 </table>
 </FORM>
-<p>Mendukung berkas dengan format .tgz/.tar.gz/.tar/.zip.</p>
+<p id="infoCompress" style="display: none">Note: archive in the format of .tgz/.tar.gz/.tar/.zip is supported.</p>
 
 <?php
 } else {
@@ -249,9 +266,9 @@ if($upload_ok == 0) {
 $domake = $_POST['domake']; 
 $tipe = $_POST['tipefile']; 
 $userfile_name = $_FILES['userfile']['name'];
-$argument_name = ($tipe == "file") ? $_FILES['argument']['name'] : "" ;
+$argument_name = ($tipe != "compressed") ? $_FILES['argument']['name'] : "" ;
 $uploadfile = $PBSWEBTEMPUPLOADDIR . "/" . $username . "/" . $userfile_name;
-$argumentfile = ($tipe == "file") ? $PBSWEBTEMPUPLOADDIR . "/" . $username . "/" . $argument_name 
+$argumentfile = ($tipe != "compressed") ? $PBSWEBTEMPUPLOADDIR . "/" . $username . "/" . $argument_name 
 									: "" ;
 $dest_dir = $PBSWEBUSERDIR . "/" . $plabel;
 $dest_file = $dest_dir . "/" . $userfile_name;
@@ -267,20 +284,21 @@ if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 	//hindari pemanggilan syscall exec dan system (pada C)
 	$pattern = "/\bexec|\bsystem\(/i";
 	if (preg_match($pattern, $contents)) {
-		echo "mengandung exec atau system";
+		echo "contains exec or system call";
 		$restrict = true;
 	}
 	
 }
 if (!empty($argument_name) && !move_uploaded_file($_FILES['argument']['tmp_name'], $argumentfile)) {
-	print "Kesalahan Upload Argument:\n";
+	print "Error in Uploading Argument:\n";
 	print_r($_FILES);
 }
 
-echo "<h2>Hasil Upload</h2>";
+echo "<h2>Upload Results</h2>";
 echo "<table border=\x220\x22>";
-echo "<tr><th align=\x22LEFT\x22>Nama Berkas:</th><td>$userfile_name</td></tr>";
-echo "<tr><th align=\x22LEFT\x22>Label:</th><td>$plabel</td></th>";
+echo "<tr><th align=\x22LEFT\x22>Filename:</th><td>$userfile_name</td></tr>";
+echo "<tr><th align=\x22LEFT\x22>Label:</th><td>$plabel</td></tr>";
+echo "<tr><th align=\x22LEFT\x22>Project Type:</th><td>$tipe</td></tr>";
 echo "<tr><th align=\x22LEFT\x22>Host:</th><td>$host</td></tr></table>";
 
 chmod($uploadfile,0644);
@@ -295,7 +313,7 @@ if (!$restrict) {
 		$mkdir = `ssh -l "$username" "$host" 'mkdir ~/$dest_dir; exit' 2>&1`;
 	}
 	echo "<pre>$mkdir</pre>";
-	if ($tipe == "file" && !empty($argument_name)) {
+	if ($tipe != "compressed" && !empty($argument_name)) {
 		$securecopy = `scp "$argumentfile" "$arg_address" 2>&1`;
 	}
 	$securecopy = `scp "$uploadfile" "$dest_address" 2>&1`;
@@ -315,7 +333,7 @@ if (!$restrict) {
 		$comm = `ssh -l "$username" "$host" 'cd ~/$PBSWEBUSERDIR; $comm > .torqace_;rm .torqace;mv .torqace_ .torqace; exit' 2>&1`;
 	}
 } else {
-	echo "<pre>Upload Gagal</pre>";
+	echo "<pre>Upload Failed</pre>";
 }
 
 # By JYJ 20040105: handle the uploaded file more gracefully; we
@@ -338,13 +356,40 @@ if (ereg(".tar.gz$",$userfile_name) || ereg(".tgz$",$userfile_name)) {
 	$untar = "None";
 }
 
-echo "<p><b>Ekstraksi berkas:</b><br><pre>$untar</pre></p>";
+
+echo "<p><b>Files extracted:</b><br><pre>$untar</pre></p>";
 
 $tarfiles = explode("\n",$untarlist);
 $plabel_path=$tarfiles[0];
 if ((!(ereg("/$",$plabel_path)))||($plabel_path=="./")) {
 	$plabel_path="";
 }
+echo "<p>$plabel_path</p>";
+// arguments zipped (array only)
+if ($tipe == "array") {
+	if (ereg(".tar.gz$",$argument_name) || ereg(".tgz$",$argument_name)) {
+		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -ztf $argument_name;exit' 2>&1`;
+		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -zxvf $argument_name;exit' 2>&1`;
+		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
+	} elseif (ereg(".tar$",$argument_name)) {
+		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -tf $argument_name;exit' 2>&1`;
+		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -xvf $argument_name;exit' 2>&1`;
+		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
+	} elseif (ereg(".zip$",$argument_name)) {
+		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; zipinfo -1 $argument_name;exit' 2>&1`;
+		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; unzip -o $argument_name;exit' 2>&1`;
+		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
+	}
+	echo "<p><b>Arguments extracted:</b><br><pre>$untar_a</pre></p>";
+} 
+
+
+$tarfiles = explode("\n",$untarlist_a);
+$plabel_path=$tarfiles[0];
+if ((!(ereg("/$",$plabel_path)))||($plabel_path=="./")) {
+	$plabel_path="";
+}
+
 echo "<p>$plabel_path</p>";
 
 if ($domake == "Yes") {
@@ -353,9 +398,9 @@ if ($domake == "Yes") {
 }
 
 echo "<p>\n";
-echo "<b>Langkah berikutnya :</b>\n";
+echo "<b>Suggested Next Step :</b>\n";
 if (!$restrict) {
-	echo " <a href=\"scriptcreate.php?directory=$plabel&host=$host\">".$TITLE_SCRIPTGEN."</a> | ";
+	echo " <a href=\"scriptcreate.php?directory=/$plabel&host=$host\">".$TITLE_SCRIPTGEN."</a> | ";
 }
 echo "<a href=\"mainmenu.php\">". $TITLE_MAINMENU . "</a>\n";
 echo "</p>\n";
