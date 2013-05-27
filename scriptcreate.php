@@ -304,6 +304,7 @@ return true;
 							// $operation != "Load a Previous Job",,
 							// output the case for a new job
 						?>
+						<h3>Project : <?php echo substr($directory, 1); ?></h3>
 						<h3>Project Type : <?php echo $tipe; ?></h3>
 						<table style="width: 90%; text-align: left; margin-left: auto; margin-right: auto;">
 							<tbody>

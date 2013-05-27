@@ -75,8 +75,8 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 		<form method="POST" action="qstat.php">
 			<table>
 				<tr>
-					<th>Host:</th><td>
-					<select name="host" onChange="window.document.forms[0].submit()">
+					<!-- <th>Host:</th> --> <td>
+					<!--<select name="host" onChange="window.document.forms[0].submit()">
 						<?php // get the list of hosts
 						foreach ($PBSWEBHOSTLIST as $hostname => $hostdata) {
 							if ($hostname == $host) {
@@ -86,9 +86,11 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 							}
 						}
 						?>
-					</select></td>
+					</select>
+					-->
+					</td>
 					<td>
-					<INPUT TYPE="submit" VALUE="Reload">
+					<INPUT TYPE="submit" VALUE="Reload Queue">
 					</td>
 				</tr>
 			</table>
@@ -157,35 +159,44 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 				<th>Queued job</th>
 				<th>Running Job</th>
 				<th>Held Job</th>
-				<th>Waiting for execution Job</th>
-				<th>Moving Job</th>
 				<th>Exiting Job</th>
 				<th>Queue Type (Execution/Routing)</th>
 			</tr>
 			<tr>
 <?php 
-			$qtatQ_arr = parseQstat_Q($qstatQ);
-			foreach ($qtatQ_arr as $keyQ => $valueQ) {
-				if (strcmp($keyQ, "isenable") == 0) 
-					$valueQ = (strcmp($valueQ, "yes") == 0) ? "Enable" : "Disable" ;
-				elseif (strcmp($keyQ, "startedstat") == 0) 
-					$valueQ = (strcmp($valueQ, "yes") == 0) ? "Started" : "Stopped" ;
-				elseif (strcmp($keyQ, "type") == 0) 
-					$valueQ = (strcmp($valueQ, "E") == 0) ? "Execution" : "Routing" ;
-				print("<td align=\"center\">" . $valueQ . "</td>");
+			$qtatQ_arr = parseQstat_Q($qstatQ,$PBSWEBQUEUELIST['hastinapura']);
+			//print_r($qtatQ_arr);
+			for ($i=0; $i < sizeof($qtatQ_arr); $i++) {
+				echo "<tr>"; 
+				foreach ($qtatQ_arr[$i] as $keyQ => $valueQ) {
+					if (strcmp($keyQ, "isenable") == 0) 
+						$valueQ = (strcmp($valueQ, "yes") == 0) ? "Enable" : "Disable" ;
+					elseif (strcmp($keyQ, "startedstat") == 0) 
+						$valueQ = (strcmp($valueQ, "yes") == 0) ? "Started" : "Stopped" ;
+					elseif (strcmp($keyQ, "type") == 0) 
+						$valueQ = (strcmp($valueQ, "E") == 0) ? "Execution" : "Routing" ;
+					switch ($keyQ) {
+						// hilangkan wait dan moving
+						case 'wat':
+						case 'trn':
+							break;
+						default:
+							print("<td align=\"center\">" . $valueQ . "</td>");
+							break;
+					}
+						
+				}
+				echo "</tr>";
 			}
 ?>		</tr></table>
 		<h2>Host Status</h2>
 		<table border="1">
 			<tr>
 				<th>Host name</th>
-				<th>Max Job that can run concurrently</th>
 				<th>Total Job</th>
 				<th>Queued job</th>
 				<th>Running Job</th>
 				<th>Held Job</th>
-				<th>Waiting for execution Job</th>
-				<th>Moving Job</th>
 				<th>Exiting Job</th>
 				<th>Host Status</th>
 			</tr>
@@ -193,7 +204,15 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 <?php 
 		$qtatB_arr = parseQstat_B($qstatB);
 			foreach ($qtatB_arr as $keyB => $valueB) {
-				print("<td align=\"center\">" . $valueB . "</td>");
+				switch ($keyB) {
+					case 'wat':
+					case 'maxjob':
+					case 'trn':
+						break;
+					default:
+						print("<td align=\"center\">" . $valueB . "</td>");
+						break;
+				}
 			}
 ?>		</tr></table>
 		<hr>				

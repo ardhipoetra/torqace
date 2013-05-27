@@ -34,22 +34,26 @@
 ############################################################
 
 # Hostname of the default resource provider for Torqace to access
-$PBSWEBDEFAULTHOST = "wolf";
+$PBSWEBDEFAULTHOST = "hastinapura";
 
 # List of all resourse providers and corresponding
 # PBS commands, the format is
 #  "hostname" => array ("qstat"=>"qstat_command" ,
 #                       "qsub"=>"qsub_command",
 #                       "qdel"=>"qdel_command"......
-$PBSWEBHOSTLIST = array("wolf" => array("qstat" => "/opt/torque/bin/qstat", 
+$PBSWEBHOSTLIST = array("hastinapura" => array("qstat" => "/opt/torque/bin/qstat", 
 										"qsub" => "/opt/torque/bin/qsub", "
 										 qdel" => "/opt/torque/bin/qdel", 
-										 "max_nodes" => 2, "max_ppn" => 2));
+										 "max_nodes" => 14, "max_ppn" => 2));
 
 # List of all queues on each resourse provider; use the
 # name of queues as the keys and the corresponding max_walltime
 # as the contents.
-$PBSWEBQUEUELIST = array("wolf" => array());
+$PBSWEBQUEUELIST = array("hastinapura" => array("serial"  =>	"48:00:00",
+						"medium"  =>	"18:00:00",
+						"short"	  =>	"06:00:00",
+						"long"    =>	"30:00:00",
+						"riset"	  =>	"9999:00:00"));
 
 # List of PBS Jobscript template files; label => template file
 # Remember to modify those template files according to your PBS
@@ -59,19 +63,19 @@ $PBSWEBTEMPLATELIST = array("plain" => "template/template_plain.pbs",
 										"openmpi" => "template/template_openmpi.pbs");
 
 # Directory on the system where Torqace is installed.
-$PBSWEBDIR = "/var/www/html/lite/v2";
+$PBSWEBDIR = "/var/www/html/torqace";
 
 # Directory used to stage the file uploaded using PBSWeb.
 # The directory should be writable by httpd; we suggest
 # to set the permission of the directory as 700.
-$PBSWEBTEMPUPLOADDIR = "/var/www/html/lite/v2/upload";
+$PBSWEBTEMPUPLOADDIR = "/var/www/html/torqace/upload";
 
 # The path to the root of the Torqace directory on URL,
 # the tailing '/' is necessary.
-$PBSWEBPATH = "/lite/v2/";
+$PBSWEBPATH = "/torqace/";
 
 # Who to contact when there is a problem...
-$PBSWEBMAIL = "ardhipoetra@idmail.or.id";
+$PBSWEBMAIL = "chpc@cs.ui.ac.id";
 
 # Logo used in the webpage
 $PBSWEBHEADERLOGO = "img/japan.gif";

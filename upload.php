@@ -282,7 +282,7 @@ if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 	$contents = file_get_contents($uploadfile);
 	
 	//hindari pemanggilan syscall exec dan system (pada C)
-	$pattern = "/\bexec|\bsystem\(/i";
+	$pattern = "/\bexec\(|\bsystem\(/i";
 	if (preg_match($pattern, $contents)) {
 		echo "contains exec or system call";
 		$restrict = true;

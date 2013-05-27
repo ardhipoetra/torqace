@@ -23,7 +23,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
  */
-?>
+?><?
 /*
 
 PBSWeb: A Web-based Interface to PBS
@@ -63,3 +63,4 @@ Other contributors to PBSWeb (as of July 2001)
 	George Ma, Victor Salamon, Christopher Pinchak, Yaling Pei,
 	Jonathan Schaeffer, Duane Szafron
 */
+?>

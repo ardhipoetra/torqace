@@ -81,6 +81,7 @@ if (!$_GET['dir']) {
 		?>
 
 		<hr>
+		<!--
 		<form name="reloadform" method="GET" action="dirview.php">
 			<table>
 				<tr>
@@ -102,9 +103,12 @@ if (!$_GET['dir']) {
 				</tr>
 			</table>
 		</form>
+		-->
 		<?php 
 			echo "<h2>";
-			echo $host . ": " . $dirnow;
+			echo "Current directory : home/".$dirnow;
+			
+			
 			echo "</h2>";
 			if ($dirnow=="") {
 				$dirlist_cmd = "ls -l ~/" . $PBSWEBUSERDIR . "/" . $dirnow;

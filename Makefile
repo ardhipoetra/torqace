@@ -4,7 +4,7 @@
 
 ## The "document root" of the PBSWeb-Lite installation,
 ## all PHP scripts will be installed into this directory.
-INSTALLDIR = /var/www/html/lite/v2
+INSTALLDIR = /var/www/html/torqace
 
 ## username that runs apache server.
 HTTPUSER = apache

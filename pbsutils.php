@@ -31,6 +31,7 @@
 // Functions used to parse and create PBS scripts.
 
 include_once ("error.php");
+include ("config.php");
 
 //
 // A PBS jobscript is defined using an array:
@@ -280,44 +281,45 @@ function parseQstat($line) {
 	return $jobs;	
 }
 // parse qstat -Q (lihat queue) supaya ke array untuk reformatting
-function parseQstat_Q($line) {
-
-	$queueinfo['nama'] = "Default";
-	$queueinfo['maxjob'] = "0";
-	$queueinfo['totrunjob'] = "0";
-	$queueinfo['isenable'] = "yes";
-	$queueinfo['startedstat'] = "yes";
-	$queueinfo['que'] = "0";
-	$queueinfo['run'] = "0";
-	$queueinfo['hld'] = "0";
-	$queueinfo['wat'] = "0";
-	$queueinfo['trn'] = "0";
-	$queueinfo['ext'] = "0";
-	$queueinfo['type'] = "E";
+function parseQstat_Q($line,$list) {
 	
+	$jumlahQ = sizeof($list);
 	$line = preg_split('/\r\n|\n|\r/',$line);
-	
-	$arr = preg_split("/\s+/", $line[2]); // hanya 1 host paling atas
-	$queueinfo['nama'] = $arr[0];
-	$queueinfo['maxjob'] = $arr[1];
-	$queueinfo['totrunjob'] = $arr[2];
-	$queueinfo['isenable'] = $arr[3];
-	$queueinfo['startedstat'] = $arr[4];
-	$queueinfo['que'] = $arr[5];
-	$queueinfo['run'] = $arr[6];
-	$queueinfo['hld'] = $arr[7];
-	$queueinfo['wat'] = $arr[8];
-	$queueinfo['trn'] = $arr[9];
-	$queueinfo['ext'] = $arr[10];
-	$queueinfo['type'] = $arr[11];
-
+	for ($i=0; $i <= $jumlahQ; $i++) { 
+		$queueinfo[$i]['nama'] = "Default";
+		$queueinfo[$i]['maxjob'] = "0";
+		$queueinfo[$i]['totrunjob'] = "0";
+		$queueinfo[$i]['isenable'] = "yes";
+		$queueinfo[$i]['startedstat'] = "yes";
+		$queueinfo[$i]['que'] = "0";
+		$queueinfo[$i]['run'] = "0";
+		$queueinfo[$i]['hld'] = "0";
+		$queueinfo[$i]['wat'] = "0";
+		$queueinfo[$i]['trn'] = "0";
+		$queueinfo[$i]['ext'] = "0";
+		$queueinfo[$i]['type'] = "E";
+		
+		$arr = preg_split("/\s+/", $line[$i+2]); 		
+		$queueinfo[$i]['nama'] = $arr[0];
+		$queueinfo[$i]['maxjob'] = $arr[1];
+		$queueinfo[$i]['totrunjob'] = $arr[2];
+		$queueinfo[$i]['isenable'] = $arr[3];
+		$queueinfo[$i]['startedstat'] = $arr[4];
+		$queueinfo[$i]['que'] = $arr[5];
+		$queueinfo[$i]['run'] = $arr[6];
+		$queueinfo[$i]['hld'] = $arr[7];
+		$queueinfo[$i]['wat'] = $arr[8];
+		$queueinfo[$i]['trn'] = $arr[9];
+		$queueinfo[$i]['ext'] = $arr[10];
+		$queueinfo[$i]['type'] = $arr[11];
+	}
 	return $queueinfo;
 }
 
 // parse qstat -B (lihat host) supaya ke array untuk reformatting
 function parseQstat_B($line) {
 	$queue_host_info = array();
-	$queue_host_info['nama'] = wolf.cs.ui.ac.id;
+	$queue_host_info['nama'] = 'hastinapura.grid.ui.ac.id';
 	$queue_host_info['maxjob'] = "0";
 	$queue_host_info['totrunjob'] = "0";
 	$queue_host_info['que'] = "0";
