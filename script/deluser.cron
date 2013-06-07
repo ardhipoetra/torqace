@@ -1,0 +1,19 @@
+#!/bin/bash
+nas=nas-0-0
+dir=/export/data1/home
+userlist=/var/www/html/data/deluser
+
+while read username; do
+	umount /home/$username
+	rocks run host compute "umount /home/$username"
+	/usr/sbin/userdel $username
+	sed -i "/$username/ D" /etc/auto.home
+	ssh $nas rm -rf $dir/$username
+	rm -f /var/spool/mail/$username
+done < $userlist
+if [[ -s $userlist ]] ; then
+	/opt/rocks/bin/rocks sync users > /tmp/cronmylogdel
+fi
+cat /dev/null > $userlist
+
+

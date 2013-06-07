@@ -1,0 +1,38 @@
+#!/bin/bash
+# Change these two lines to localize to your system:
+# Adapted from /usr/local/sbin/admin_useradd
+# just for adding user-level
+nas=nas-0-0
+dir=/export/data1/home
+
+grup=user
+frontend=`/bin/hostname -s`
+userlist=/var/www/html/data/newuser
+
+while read username pass mail; do
+	/usr/sbin/useradd $username -G $grup
+	echo $username:$pass | chpasswd
+
+	mkdir /export/home/$username/pbsweb
+	touch /export/home/$username/pbsweb/.torqace
+	chown -R $username /export/home/$username/pbsweb
+	chgrp -R $username /export/home/$username/pbsweb
+	
+
+	mkdir /export/home/$username/.ssh
+	cat /etc/apache.key >> /export/home/$username/.ssh/authorized_keys
+	chown -R $username /export/home/$username/.ssh
+	chgrp -R $username /export/home/$username/.ssh
+	chmod -R 700 /export/home/$username/.ssh
+
+	sed -i "s|${frontend}.local:/export/home/${username}|${nas}:${dir}/${username}|" /etc/auto.home
+
+	rsync -a /export/home/$username ${nas}:$dir
+	rm -rf /export/home/$username #keep for bakup, or not
+
+	echo "User $username created, please wait about 5 minutes more." | mail -s "Torqace user registration" $mail
+done < $userlist
+if [[ -s $userlist ]] ; then
+	/opt/rocks/bin/rocks sync users > /tmp/cronmylog
+fi
+cat /dev/null > $userlist
