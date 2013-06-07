@@ -48,7 +48,9 @@ if (!session_is_vaild()) {
 	auth_login($_POST['username'], $_POST['password']);
 } else {
 	$username = $_SESSION['username'];
+	
 }
+$isAdmin = $_SESSION['isadmin'];
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -76,6 +78,11 @@ if (!session_is_vaild()) {
 							<img src="img/info.png" height="32" width="32" alt="Info Queue">
 							<a href="qstat.php"><?php echo $TITLE_QSTAT; ?></a><br><br>
 							<img src="img/folder.png" height="32" width="32" alt="Lihat Berkas"> <a href="dirview.php"><?php echo $TITLE_VIEWDIR; ?></a>
+							<?php if ($isAdmin) { ?>
+							<br>
+							<br>
+							<img src="img/settings.png" height="32" width="32" alt="Settings"> <a href="admins.php">Admin Settings</a>
+							<?php } ?>
 							<br>
 							<br>
 							<img src="img/exit.png" height="32" width="32" alt="Logout"> <a href="logout.php">Logout</a>

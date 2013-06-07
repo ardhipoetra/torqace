@@ -165,7 +165,9 @@ include ("navbar.php");
 				</tr>
 				<tr>
 					<th>Started Time</th>
-					<td><?php echo date(DATE_RFC850,intval($xml->Job[0]->start_time)); ?></td>
+					<td><?php echo 
+						isset($xml->Job[0]->start_time) ? 
+							date(DATE_RFC850,intval($xml->Job[0]->start_time)) : "-"; ?></td>
 				</tr>
 				<tr>
 					<th>Priority</th>

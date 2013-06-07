@@ -310,7 +310,7 @@ if (!$restrict) {
 			$mkdir = `ssh -l "$username" "$host" 'rm -f ~/$dest_dir; mkdir ~/$dest_dir; exit' 2>&1`;
 		}
 	} else {
-		$mkdir = `ssh -l "$username" "$host" 'mkdir ~/$dest_dir; exit' 2>&1`;
+		$mkdir = `ssh -l "$username" "$host" 'mkdir -p ~/$dest_dir/input; exit' 2>&1`;
 	}
 	echo "<pre>$mkdir</pre>";
 	if ($tipe != "compressed" && !empty($argument_name)) {
@@ -369,15 +369,15 @@ echo "<p>$plabel_path</p>";
 if ($tipe == "array") {
 	if (ereg(".tar.gz$",$argument_name) || ereg(".tgz$",$argument_name)) {
 		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -ztf $argument_name;exit' 2>&1`;
-		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -zxvf $argument_name;exit' 2>&1`;
+		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -zxvf $argument_name -C input;exit' 2>&1`;
 		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
 	} elseif (ereg(".tar$",$argument_name)) {
 		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -tf $argument_name;exit' 2>&1`;
-		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -xvf $argument_name;exit' 2>&1`;
+		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -xvf $argument_name -C inputl;exit' 2>&1`;
 		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
 	} elseif (ereg(".zip$",$argument_name)) {
 		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; zipinfo -1 $argument_name;exit' 2>&1`;
-		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; unzip -o $argument_name;exit' 2>&1`;
+		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; unzip -d input -o $argument_name;exit' 2>&1`;
 		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
 	}
 	echo "<p><b>Arguments extracted:</b><br><pre>$untar_a</pre></p>";

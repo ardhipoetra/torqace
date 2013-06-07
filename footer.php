@@ -32,5 +32,5 @@
 		echo "<a href=\"mailto:" . $PBSWEBMAIL . "\">";
 		echo $PBSWEBMAIL . "</a>\n";
 	?>
-	You can find <a href='help/index.html'>help here </a>.
+	You can find <a href='../wiki/'>help here </a>.
 </p>

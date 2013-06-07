@@ -28,7 +28,7 @@
 include_once ("config.php");
 include_once 'constant.php';
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
 <html>
 	<head>
 		<title><?php echo $TITLE_INDEX; ?></title>
@@ -64,6 +64,7 @@ include_once 'constant.php';
 									</TR>
 								</TABLE>
 								<hr width="400">
+								Doesn't have account yet? Register <a href="regist.php">here</a>!
 							</FORM> </font></td>
 					</tr>
 				</table></td>

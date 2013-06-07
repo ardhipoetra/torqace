@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   
   strncpy(salt, passwd->sp_pwdp, 11);
   strncpy(pass, crypt(pass, salt), 127);
-
+  //printf("%s",pass);
   if(!strncmp(pass, passwd->sp_pwdp, 127))
     return 0;
 

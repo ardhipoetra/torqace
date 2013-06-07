@@ -64,6 +64,13 @@ function auth_login($username, $password) {
 			if (!file_exists($tmpdir)) {
 				mkdir($tmpdir, 0700);
 			}
+			
+			$gr = shell_exec("id -G $username | grep 504");
+			if (isset($gr)) {
+				$_SESSION['isadmin'] = 1;
+			} else {
+				$_SESSION['isadmin'] = 0;
+			}
 
 			return 0;
 		} else {

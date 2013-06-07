@@ -152,7 +152,7 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 		<table border="1">
 			<tr>
 				<th>Queue name</th>
-				<th>Max Job that may be run concurrently</th>
+				<th>Max Concurrent Job</th>
 				<th>Job in Queue</th>
 				<th>Status (Enable/Disable)</th>
 				<th>Status (Started/Stopped)</th>

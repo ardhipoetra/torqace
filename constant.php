@@ -32,4 +32,6 @@
 	$TITLE_SCRIPTVIEW = "Script Review Torque";
 	$TITLE_VIEWDIR = "View File/Project";
 	$TITLE_QSTAT = "Queue Status";
+	$TITLE_REGISTER = "Register New User";
+	$TITLE_ADMIN = "Admin Page";
 ?>
