@@ -61,7 +61,7 @@
 				if (!empty($uname)) {
 					echo "<tr><td>";
 					echo $uname."</td>";
-					echo '<td><a href="admins.php?delwho='.$uname.'">Delete</a></td>';
+					echo '<td><a href="admins.php?delwho='.$uname.'" onclick="return confirm(\'Are you sure to delete user '.$uname.'?\');">Delete</a></td>';
 					echo "</tr>";
 				}
 			}

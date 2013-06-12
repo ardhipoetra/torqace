@@ -128,10 +128,17 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 				$the_new_line = ereg_replace('(  *)', " ", $stringarray[$i]);
 				$line_array = explode(" ", $the_new_line);
 				$jobid = (int)$line_array[0];
+				$isArrJob = false;
+				if (strpos($line_array[0], '[') !== FALSE) {
+					$isArrJob = true;					
+				}
 				for ($j = 0; $j < sizeof($line_array)-1; $j = $j + 1) {
 					print('<td align="center">');
 					if ($j == 0)
-						print("<a href=\"jobstatus.php?jobid=$jobid&host=$host\">$line_array[$j]</a></td>");
+						if ($isArrJob)
+							print("<a href=\"jobstatus.php?arr=true&jobid=$jobid&host=$host\">$line_array[$j]</a></td>");
+						else
+							print("<a href=\"jobstatus.php?jobid=$jobid&host=$host\">$line_array[$j]</a></td>");
 					elseif ($j == 4) {
 						if ($line_array[$j] == "C") print("Completed</td>");
 						elseif ($line_array[$j] == "R") print("Running</td>");
@@ -139,6 +146,14 @@ if (!isset($PBSWEBHOSTLIST[$host]["qstat"]) || $PBSWEBHOSTLIST[$host]["qstat"] =
 					}
 					elseif ($j==6 && $username == $line_array[2]) {
 						//print("<a href=\"qdel.php?jobid=$jobid&host=$host\">Delete</a></td>");
+					}
+					elseif ($j == 3) {
+						$qstat_job = `ssh -l $username $host '$qstat_cmd -f  $jobid | grep resources_used.walltime; exit' 2>&1`;
+						$arr = explode(" ", $qstat_job);
+						if (isset($arr[6])) 
+							print("$arr[6]</td>");
+						else 
+							print("00:00:00</td>");
 					}
 					else
 						print("$line_array[$j]</td>");

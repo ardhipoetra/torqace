@@ -231,12 +231,15 @@ if($upload_ok == 0) {
 	}
 ?>
 <FORM ENCTYPE="multipart/form-data" METHOD="POST" name="mainform" onSubmit="return FormSubmit();">
-<select name="tipefile" onChange="javascript:ChangeFile()">
-	<option value="file">Single File</option>
-	<option value="compressed">Compressed Files</option>
-	<option value="array">Array</option>
-</select>	
-<table><tr align="left"><th><?php echo $TITLE_UPLOAD; ?>:
+<table>
+	<tr align="left"><th>Project Type</th><td>
+		<select name="tipefile" onChange="javascript:ChangeFile()">
+			<option value="file">Single File</option>
+			<option value="compressed">Compressed Files</option>
+			<option value="array">Array</option>
+		</select>
+	</td>
+	<tr align="left"><th><?php echo $TITLE_UPLOAD; ?>:
 <br>Warning:  Must be less than 50 MB!<br></th><td>
 <INPUT TYPE="hidden" name="MAX_FILE_SIZE" value="52428800"/>
 <INPUT TYPE="hidden" name="host" value="<?php echo $PBSWEBDEFAULTHOST; ?>"/>
@@ -244,12 +247,12 @@ if($upload_ok == 0) {
 <TR ALIGN="LEFT" id="argrow"><TH id="argprogtxt">Program Argument(Not Compressed)</TH>
 	<TD><INPUT TYPE="file" NAME="argument"/>
 		<div id="infoArr" style="display: none">Read about array arguments 
-			<a href="help/help-arrInput.html">here</a></div></TD></TR>
+			<a href="../wiki/index.php/Array_Job_Submission">here</a></div></TD></TR>
 	<TR ALIGN="LEFT"><TH>Enter a Label:<br></TH>
 	<TD><INPUT TYPE="text" NAME="plabel">  (continuous alpha-numeric string)</TD></TR>
 <TR ALIGN="LEFT" id="makerow" style="display: none"><TH>Make?<br></TH>
 	<TD><INPUT TYPE="checkbox" NAME="domake" VALUE="Yes">Read about how to create Makefile  
-		<a href="help/help-make.html">here</a>
+		<a href="../wiki/index.php/Makefile">here</a>
 	</td></tr>
 <TR ALIGN="LEFT"><TH>Overwrite?<br></TH>
 <TD><INPUT TYPE="checkbox" NAME="overwrite" VALUE="Yes">

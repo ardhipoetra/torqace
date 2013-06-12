@@ -68,6 +68,7 @@
 			function validateForm(){
 				var uname=document.forms["registform"]["uname"].value;
 				var pass=document.forms["registform"]["pass"].value;
+				var pass2=document.forms["registform"]["pass2"].value;
 				var x=document.forms["registform"]["mail"].value;
 				var invalidchars = " /\t\n()[]\\|*?$&`<>{}";
 				if (uname==null || uname=="") {
@@ -91,6 +92,11 @@
   					alert("Password must be filled out");
   					return false;
   				}
+  				if (pass != pass2) {
+  					alert("Password not match!")
+  					return false;
+  				}
+  				
   				var atpos=x.indexOf("@");
 				var dotpos=x.lastIndexOf(".");
 				if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
@@ -116,9 +122,11 @@
 <h1>
 <img src="<?php echo $PBSWEBHEADERLOGO; ?>" border="0" height="102" width="92" alt="PBS Logo"><?php echo $TITLE_REGISTER; ?></h1>
 <hr/>
+
 <form method="post" action="" name="registform" onsubmit="return validateForm()" >
 	Username: <input type="text" name="uname" /> <br/>
 	Password: <input type="password" name="pass" /> <br/>
+	Password (Again): <input type="password" name="pass2" /> <br/>
 	Mail: <input type="email" name="mail" /> <br/>
 	<input type="submit" name="submit" value="Submit"/> 
 	<input type="reset" value="Clear" />

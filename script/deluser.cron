@@ -5,7 +5,7 @@ userlist=/var/www/html/data/deluser
 
 while read username; do
 	umount /home/$username
-	rocks run host compute "umount /home/$username"
+	/opt/rocks/bin/rocks run host compute "umount /home/$username"
 	/usr/sbin/userdel $username
 	sed -i "/$username/ D" /etc/auto.home
 	ssh $nas rm -rf $dir/$username

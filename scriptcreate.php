@@ -281,6 +281,7 @@ return true;
 								</tr>
 								<tr>
 									<td style="text-align: center; vertical-align: middle;">
+									Job list : 
 									<br>
 									<select name="loadjob">										
 										<?php

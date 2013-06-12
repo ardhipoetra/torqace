@@ -8,10 +8,12 @@ dir=/export/data1/home
 grup=user
 frontend=`/bin/hostname -s`
 userlist=/var/www/html/data/newuser
-
+listemailto=()
+listusername=()
 while read username pass mail; do
 	/usr/sbin/useradd $username -G $grup
-	echo $username:$pass | chpasswd
+	#echo $username:$pass | chpasswd
+	echo -e "$pass\n$pass" | passwd $username > /dev/null 2>&1
 
 	mkdir /export/home/$username/pbsweb
 	touch /export/home/$username/pbsweb/.torqace
@@ -30,9 +32,20 @@ while read username pass mail; do
 	rsync -a /export/home/$username ${nas}:$dir
 	rm -rf /export/home/$username #keep for bakup, or not
 
-	echo "User $username created, please wait about 5 minutes more." | mail -s "Torqace user registration" $mail
+	listemailto+=($mail)
+	listusername+=($username)
+
 done < $userlist
 if [[ -s $userlist ]] ; then
-	/opt/rocks/bin/rocks sync users > /tmp/cronmylog
+	date >> /tmp/cronmylog
+	/opt/rocks/bin/rocks sync users >> /tmp/cronmylog
 fi
 cat /dev/null > $userlist
+
+for (( i=0; i<${#listemailto[@]}; i++ ))
+do
+	uname=${listusername[$i]}
+	mailto=${listemailto[$i]}
+		
+	echo "User $uname created, please use torqace wisely." | mail -s "Torqace user registration" $mailto
+done
