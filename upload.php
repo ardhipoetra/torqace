@@ -240,7 +240,7 @@ if($upload_ok == 0) {
 		</select>
 	</td>
 	<tr align="left"><th><?php echo $TITLE_UPLOAD; ?>:
-<br>Warning:  Must be less than 50 MB!<br></th><td>
+<br>Warning:  Must be less than 200 MB!<br></th><td>
 <INPUT TYPE="hidden" name="MAX_FILE_SIZE" value="52428800"/>
 <INPUT TYPE="hidden" name="host" value="<?php echo $PBSWEBDEFAULTHOST; ?>"/>
 <INPUT NAME="userfile" TYPE="file"></td></tr>
@@ -376,7 +376,7 @@ if ($tipe == "array") {
 		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
 	} elseif (ereg(".tar$",$argument_name)) {
 		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -tf $argument_name;exit' 2>&1`;
-		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -xvf $argument_name -C inputl;exit' 2>&1`;
+		$untar_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; tar -xvf $argument_name -C input;exit' 2>&1`;
 		$remove_userfile =`ssh -l "$username" "$host" 'cd ~/$dest_dir; rm -f $argument_name;exit' 2>&1`;
 	} elseif (ereg(".zip$",$argument_name)) {
 		$untarlist_a = `ssh -l "$username" "$host" 'cd ~/$dest_dir; zipinfo -1 $argument_name;exit' 2>&1`;

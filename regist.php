@@ -37,7 +37,7 @@
 		//echo $uname."\n";
 		//echo $pass."\n";
 		//echo $email."\n";
-		$x = file_put_contents('/var/www/html/data/newuser', "$uname $pass $email".PHP_EOL, FILE_APPEND);
+		$x = file_put_contents($TORQACE_REGIST, "$uname $pass $email".PHP_EOL, FILE_APPEND);
 		if ($x) {
 			echo "<h1>Registrasion Successful</h1>";
 			echo "<h2>Please wait for email confirmation..</h2>";
@@ -47,7 +47,7 @@
 		echo "<a href='index.php'>Back to home</a>";
 		//echo '<META HTTP-EQUIV=Refresh CONTENT="2; URL=index.php">';  
 	} else {
-		$daptar = shell_exec("/usr/local/sbin/listusers");
+		$daptar = shell_exec($LISTUSERS_EXE);
 		$arr =  explode("\n", $daptar);
 		//print_r($arr);
 ?>

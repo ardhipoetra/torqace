@@ -2,12 +2,15 @@
 # Change these two lines to localize to your system:
 # Adapted from /usr/local/sbin/admin_useradd
 # just for adding user-level
-nas=nas-0-0
-dir=/export/data1/home
+nas=
+dir=
+userlist=
+
+
 
 grup=user
 frontend=`/bin/hostname -s`
-userlist=/var/www/html/data/newuser
+
 listemailto=()
 listusername=()
 while read username pass mail; do

@@ -16,12 +16,12 @@
 		exit();
 	}
 	
-	$daptar = shell_exec("/usr/local/sbin/listusers");
+	$daptar = shell_exec($LISTUSERS_EXE);
 	$arr =  explode("\n", $daptar);
 	
 	if ($_GET['delwho']) {
 		$dieduser = $_GET['delwho'];
-		$x = file_put_contents('/var/www/html/data/deluser', "$dieduser".PHP_EOL, FILE_APPEND);
+		$x = file_put_contents($TORQACE_DELUSER, "$dieduser".PHP_EOL, FILE_APPEND);
 		foreach ($arr as $key => $uname) {
 			if ($uname == $dieduser) {
 				unset($arr[$key]);

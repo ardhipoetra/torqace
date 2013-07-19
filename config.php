@@ -34,26 +34,25 @@
 ############################################################
 
 # Hostname of the default resource provider for Torqace to access
-$PBSWEBDEFAULTHOST = "hastinapura";
+$PBSWEBDEFAULTHOST = "";
 
 # List of all resourse providers and corresponding
 # PBS commands, the format is
 #  "hostname" => array ("qstat"=>"qstat_command" ,
 #                       "qsub"=>"qsub_command",
 #                       "qdel"=>"qdel_command"......
-$PBSWEBHOSTLIST = array("hastinapura" => array("qstat" => "/opt/torque/bin/qstat", 
+$PBSWEBHOSTLIST = array("" => array("qstat" => "/opt/torque/bin/qstat", 
 										"qsub" => "/opt/torque/bin/qsub", "
 										 qdel" => "/opt/torque/bin/qdel", 
-										 "max_nodes" => 14, "max_ppn" => 2));
+										 "max_nodes" => 10, "max_ppn" => 2));
 
 # List of all queues on each resourse provider; use the
 # name of queues as the keys and the corresponding max_walltime
 # as the contents.
-$PBSWEBQUEUELIST = array("hastinapura" => array("serial"  =>	"48:00:00",
+$PBSWEBQUEUELIST = array("" => array("serial"  =>	"48:00:00",
 						"medium"  =>	"18:00:00",
 						"short"	  =>	"06:00:00",
-						"long"    =>	"30:00:00",
-						"riset"	  =>	"9999:00:00"));
+						"long"    =>	"30:00:00"));
 
 # List of PBS Jobscript template files; label => template file
 # Remember to modify those template files according to your PBS
@@ -63,19 +62,19 @@ $PBSWEBTEMPLATELIST = array("plain" => "template/template_plain.pbs",
 										"openmpi" => "template/template_openmpi.pbs");
 
 # Directory on the system where Torqace is installed.
-$PBSWEBDIR = "/var/www/html/torqace";
+$PBSWEBDIR = "";
 
 # Directory used to stage the file uploaded using PBSWeb.
 # The directory should be writable by httpd; we suggest
 # to set the permission of the directory as 700.
-$PBSWEBTEMPUPLOADDIR = "/var/www/html/torqace/upload";
+$PBSWEBTEMPUPLOADDIR = "";
 
 # The path to the root of the Torqace directory on URL,
 # the tailing '/' is necessary.
 $PBSWEBPATH = "/torqace/";
 
 # Who to contact when there is a problem...
-$PBSWEBMAIL = "chpc@cs.ui.ac.id";
+$PBSWEBMAIL = "";
 
 # Logo used in the webpage
 $PBSWEBHEADERLOGO = "img/japan.gif";
@@ -100,6 +99,10 @@ $PBSWEBEXPTIME = 3600;
 # A relative path to $PBSWEBDIR where files-to-be-downloaded will
 # be staged.
 $PBSWEBTEMPDOWNLOADDIR = "download";
+
+$TORQACE_REGIST = '/var/www/newuser';
+$TORQACE_DELUSER = '/var/www/deluser';
+$LISTUSERS_EXE = "/usr/bin/listusers";
 
 // $Id: config.php,v 1.14 2004/03/19 03:42:21 platin Exp $
 ?>
